@@ -1,6 +1,7 @@
 package otus.deryagina.spring.libraryjdbc.dao;
 
-import lombok.AllArgsConstructor;
+
+import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
@@ -13,8 +14,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
+
 @Repository
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class BookDaoJdbc implements BookDao {
 
     private final NamedParameterJdbcOperations namedParameterJdbcOperations;
@@ -56,6 +58,10 @@ public class BookDaoJdbc implements BookDao {
         if( book.getAuthors() == null || book.getAuthors().isEmpty()){
             throw  new IllegalArgumentException("Try to insert book with null or empty authors");
         }
+
+
+
+
         //TODO: check authors and genres, insert if they not exist, insert correlations, insert book
     }
 
@@ -68,7 +74,7 @@ public class BookDaoJdbc implements BookDao {
                 long id = resultSet.getLong("id");
                 Book book = bookMap.get(id);
                 if (book == null) {
-                    book = new Book(id, resultSet.getString("title"), new ArrayList<Author>(),
+                    book = new Book(id, resultSet.getString("title"), new ArrayList<>(),
                             new ArrayList<>());
                     bookMap.put(id, book);
                 }

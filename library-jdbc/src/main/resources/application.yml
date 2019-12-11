@@ -1,5 +1,11 @@
+application:
+  version: '@project.version@'
+  locale-name: ru_RU
 spring:
-  datasource:
-    url: jdbc:h2:tcp://localhost/~/testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+#  datasource:
+#    url: jdbc:h2:tcp://localhost/~/testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
+jdbc:
+  h2:
+    mem: testdb

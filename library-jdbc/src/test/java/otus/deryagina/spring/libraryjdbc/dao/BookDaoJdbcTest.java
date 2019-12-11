@@ -12,7 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("Dao for work with books")
 @ExtendWith(SpringExtension.class)
-@Import(BookDaoJdbc.class)
+@Import({BookDaoJdbc.class,GenreDaoJdbc.class})
 @JdbcTest
 class BookDaoJdbcTest {
 

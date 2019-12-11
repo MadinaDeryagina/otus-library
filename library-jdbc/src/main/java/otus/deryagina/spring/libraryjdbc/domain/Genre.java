@@ -1,9 +1,11 @@
 package otus.deryagina.spring.libraryjdbc.domain;
 
-import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
+@Data
 @ToString
 public class Genre {
 

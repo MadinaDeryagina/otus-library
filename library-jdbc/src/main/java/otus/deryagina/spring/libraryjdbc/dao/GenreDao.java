@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface GenreDao {
     List<Genre> findAll();
+    List<Genre> findGenresByNames(List<String> names);
+    Genre findGenreByName(String name);
 }
