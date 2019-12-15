@@ -9,6 +9,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
+@EqualsAndHashCode
 public class BookDTO {
     private long id;
     private String title;

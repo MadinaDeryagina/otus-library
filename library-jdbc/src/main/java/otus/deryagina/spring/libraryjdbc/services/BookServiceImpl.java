@@ -45,4 +45,14 @@ public class BookServiceImpl implements BookService {
         return entityToDtoMapper.entityToDto(book);
     }
 
+    @Override
+    public List<BookDTO> findBooksByTitle(String title) {
+        List<Book> books = bookDao.findBooksByTitle(title);
+        if( books.isEmpty()){
+            return  new ArrayList<>();
+        }else {
+            return entityToDtoMapper.entityToDto(books);
+        }
+    }
+
 }

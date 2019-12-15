@@ -3,6 +3,7 @@ package otus.deryagina.spring.libraryjdbc.shell;
 import lombok.AllArgsConstructor;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
+import otus.deryagina.spring.libraryjdbc.interaction.InteractionService;
 import otus.deryagina.spring.libraryjdbc.services.BookService;
 import otus.deryagina.spring.libraryjdbc.services.GenreService;
 
@@ -12,6 +13,7 @@ public class LibraryJdbcApplicationCommands {
 
     private final GenreService genreService;
     private final BookService bookService;
+    private final InteractionService interactionService;
 
     @ShellMethod(value = "show all books", key = {"sab"})
     public void showAllBooks() {
@@ -30,7 +32,7 @@ public class LibraryJdbcApplicationCommands {
 
     @ShellMethod(value = "add new book", key = {"addbook", "ab"})
     public void addBook() {
-
+        interactionService.askToAddBook();
 
     }
 }

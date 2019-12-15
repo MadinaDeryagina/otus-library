@@ -14,11 +14,11 @@ values (1, 'My book');
 insert into AUTHORS(id, name)
 values (1, 'First author');
 insert into AUTHORS(id, name)
-VALUES (2,'Second author');
+VALUES (2, 'Second author');
 insert into BOOKS_AUTHORS_CORRELATION
 values (1, 1);
 insert into BOOKS_AUTHORS_CORRELATION
-values ( 1, 2 );
+values (1, 2);
 insert into BOOKS_GENRES_CORRELATION
 values (1, 2);
 insert into BOOKS_GENRES_CORRELATION
@@ -27,6 +27,20 @@ values (1, 3);
 insert into BOOKS(id, title)
 values (2, 'Second book');
 insert into BOOKS_AUTHORS_CORRELATION
-values ( 2, 1 );
+values (2, 1);
 insert into BOOKS_GENRES_CORRELATION
-values ( 2,1 );
+values (2, 1);
+
+insert into BOOKS(id, TITLE)
+values (3, 'Same title dif authors');
+insert into BOOKS_AUTHORS_CORRELATION
+values (3, 1);
+insert into BOOKS_GENRES_CORRELATION
+values (3, 4);
+
+insert into BOOKS(id, TITLE)
+values (4, 'Same title dif authors');
+insert into BOOKS_AUTHORS_CORRELATION
+values (4, 2);
+insert into BOOKS_GENRES_CORRELATION
+values (4, 3);

@@ -13,6 +13,7 @@ import otus.deryagina.spring.libraryjdbc.domain.Genre;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Repository
@@ -44,6 +45,20 @@ public class BookDaoJdbc implements BookDao {
             return map.get(id);
         } else {
             return null;
+        }
+    }
+
+    @Override
+    public List<Book> findBooksByTitle(String title) {
+        Map<String, Object> param = new HashMap<>();
+        param.put("title", title);
+        Map<Long, Book> map = namedParameterJdbcOperations.query("select  b.id, b.title, a.ID as author_id, a.NAME as author,g.Id as genre_id, g.NAME as genre from BOOKS b inner join BOOKS_AUTHORS_CORRELATION BAC on b.ID = BAC.BOOKID\n" +
+                "inner join AUTHORS A on BAC.AUTHORID = A.ID inner join BOOKS_GENRES_CORRELATION BGC on b.ID = BGC.BOOKID\n" +
+                "inner join GENRES G on BGC.GENREID = G.ID WHERE b.TITLE= :title", param, new BookResultSetExtractor());
+        if (map != null) {
+            return new ArrayList<>(map.values());
+        } else {
+            return new ArrayList<>();
         }
     }
 
