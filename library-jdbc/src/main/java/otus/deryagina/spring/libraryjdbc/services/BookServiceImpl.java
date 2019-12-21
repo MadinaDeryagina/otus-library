@@ -14,6 +14,7 @@ import otus.deryagina.spring.libraryjdbc.dto.GenreDTO;
 import otus.deryagina.spring.libraryjdbc.mapper.ModelMapper;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -68,12 +69,12 @@ public class BookServiceImpl implements BookService {
                 .map(AuthorDTO::getFullName).collect(Collectors.toList());
         // check if there are authors,who are already in the library
         List<Author> authorsFromDb = authorDao.findAuthorsByNames(authorsNames);
-        List<String> authorsNamesFromDb = authorsFromDb.stream().
-                map(Author::getFullName).collect(Collectors.toList());
         //get existing authors if they are, create new for those who are not
         List<Author> authorsForNewBook = new ArrayList<>(authorsFromDb);
         // if there are authors who are not in db
-        if (authorsNames.size() > authorsNamesFromDb.size()) {
+        if (authorsNames.size() > authorsFromDb.size()) {
+            List<String> authorsNamesFromDb = authorsFromDb.stream().
+                    map(Author::getFullName).collect(Collectors.toList());
             List<Author> authorsToSave = authorDTOS.stream().filter(x -> !authorsNamesFromDb.contains(x.getFullName()))
                     .map(modelMapper::dtoToEntity).collect(Collectors.toList());
             for (Author author :
@@ -118,8 +119,95 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public boolean updateBook(BookDTO bookToUpdate, BookDTO targetInfo) {
-        return false;
+        //bookToUpdate id is id from db
+        //compare bookToUpdate with targetInfo to understand what to update
+        boolean isUpdated = false;
+        if(!bookToUpdate.getTitle().equalsIgnoreCase(targetInfo.getTitle())){
+            bookDao.updateBookTitle(bookToUpdate.getId(),targetInfo.getTitle());
+            isUpdated = true;
+        }
+        isUpdated = isAuthorUpdated(bookToUpdate, targetInfo);
+
+        return isUpdated;
     }
 
+    private boolean isAuthorUpdated(BookDTO bookToUpdate, BookDTO targetInfo) {
+        boolean isUpdated = false;
+        List<String> targetInfoAuthorsNames = targetInfo.getAuthorDTOS().stream()
+                .map(AuthorDTO::getFullName).collect(Collectors.toList());
+        List<String> currentAuthorsNames = bookToUpdate.getAuthorDTOS().stream()
+                .map(AuthorDTO::getFullName).collect(Collectors.toList());
+
+        List<String> authorsNamesToAddToBook = targetInfoAuthorsNames.stream()
+                .filter(x-> !currentAuthorsNames.contains(x)).collect(Collectors.toList());
+        HashSet<String> authorNamesNotInDb = new HashSet<>(authorsNamesToAddToBook);
+        if(!authorsNamesToAddToBook.isEmpty()){
+            List<Author> authorsFromDb = authorDao.findAuthorsByNames(authorsNamesToAddToBook);
+          for(Author currentAuthorFromDB : authorsFromDb){
+              bookDao.addAuthorForBook(bookToUpdate.getId(),currentAuthorFromDB.getId());
+              authorNamesNotInDb.remove(currentAuthorFromDB.getFullName());
+              isUpdated=true;
+          }
+          if(!authorNamesNotInDb.isEmpty()){
+              for (String currentName : authorNamesNotInDb){
+                  Author author= new Author();
+                  author.setFullName(currentName);
+                  long newAuthorId = authorDao.insert(author);
+                  bookDao.addAuthorForBook(bookToUpdate.getId(),newAuthorId);
+                  isUpdated=true;
+              }
+          }
+        }
+        List<String> authorNamesToDeleteFromBook = bookToUpdate.getAuthorDTOS()
+                .stream().map(AuthorDTO::getFullName)
+                .filter(x->!targetInfoAuthorsNames.contains(x))
+                .collect(Collectors.toList());
+        if(!authorNamesToDeleteFromBook.isEmpty()){
+            List<Author> authorToDeleteFromBook = authorDao.findAuthorsByNames(authorNamesToDeleteFromBook);
+            for(Author currentAuthor : authorToDeleteFromBook){
+                bookDao.deleteAuthorFromBook(bookToUpdate.getId(),currentAuthor.getId());
+            }
+        }
+        return isUpdated;
+    }
+    private boolean isGenreUpdated(BookDTO bookToUpdate, BookDTO targetInfo) {
+        boolean isUpdated = false;
+        List<String> targetInfoGenresNames = targetInfo.getGenreDTOS().stream()
+                .map(GenreDTO::getName).collect(Collectors.toList());
+        List<String> currentGenresNames = bookToUpdate.getGenreDTOS().stream()
+                .map(GenreDTO::getName).collect(Collectors.toList());
+
+        List<String> genresNamesToAddToBook = targetInfoGenresNames.stream()
+                .filter(x-> !currentGenresNames.contains(x)).collect(Collectors.toList());
+        HashSet<String> genreNamesNotInDb = new HashSet<>(genresNamesToAddToBook);
+        if(!genresNamesToAddToBook.isEmpty()){
+            List<Genre> genresFromDb = genreDao.findGenresByNames(genresNamesToAddToBook);
+            for(Genre currentGenreFromDB : genresFromDb){
+                bookDao.addGenreForBook(bookToUpdate.getId(),currentGenreFromDB.getId());
+                genreNamesNotInDb.remove(currentGenreFromDB.getName());
+                isUpdated=true;
+            }
+            if(!genreNamesNotInDb.isEmpty()){
+                for (String currentName : genreNamesNotInDb){
+                    Genre genre= new Genre();
+                    genre.setName(currentName);
+                    long newGenreId = genreDao.insert(genre);
+                    bookDao.addGenreForBook(bookToUpdate.getId(),newGenreId);
+                    isUpdated=true;
+                }
+            }
+        }
+        List<String> genreNamesToDeleteFromBook = bookToUpdate.getGenreDTOS()
+                .stream().map(GenreDTO::getName)
+                .filter(x->!targetInfoGenresNames.contains(x))
+                .collect(Collectors.toList());
+        if(!genreNamesToDeleteFromBook.isEmpty()){
+            List<Genre> genreToDeleteFromBook = genreDao.findGenresByNames(genreNamesToDeleteFromBook);
+            for(Genre currentGenre : genreToDeleteFromBook){
+                bookDao.deleteGenreFromBook(bookToUpdate.getId(),currentGenre.getId());
+            }
+        }
+        return isUpdated;
+    }
 
 }

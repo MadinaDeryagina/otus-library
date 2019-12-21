@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 import otus.deryagina.spring.libraryjdbc.domain.Author;
 import otus.deryagina.spring.libraryjdbc.domain.Book;
 import otus.deryagina.spring.libraryjdbc.domain.Genre;
+import otus.deryagina.spring.libraryjdbc.dto.BookDTO;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -105,7 +106,42 @@ public class BookDaoJdbc implements BookDao {
 
         return newBookId;
 
+    }
 
+    @Override
+    public void updateBookTitle(long id, String newTitle) {
+        Map<String,Object> params = new HashMap<>(1);
+        params.put("id", id);
+        params.put("title",newTitle);
+        namedParameterJdbcOperations.update("update books set title = :title where id = :id",params);
+    }
+
+    @Override
+    public void addAuthorForBook(long bookId, long authorId) {
+        Map<String, Object> bookAuthorParams = new HashMap<>(2);
+        bookAuthorParams.put("bookId", bookId);
+        bookAuthorParams.put("authorId", authorId);
+        namedParameterJdbcOperations.update("insert into books_authors_correlation (bookId, authorId) values (:bookId, :authorId)"
+                ,bookAuthorParams);
+    }
+
+    @Override
+    public void deleteAuthorFromBook(long bookId, long authorId) {
+        Map<String, Object> bookAuthorParams = new HashMap<>(2);
+        bookAuthorParams.put("bookId", bookId);
+        bookAuthorParams.put("authorId", authorId);
+        namedParameterJdbcOperations.update("delete from books_authors_correlation where BOOKID =:bookId and AUTHORID =:authorId)"
+                ,bookAuthorParams);
+    }
+
+    @Override
+    public void addGenreForBook(long id, long id1) {
+        //TODO: implement mthd
+    }
+
+    @Override
+    public void deleteGenreFromBook(long id, long id1) {
+        //TODO: implement mthd
     }
 
     private static class BookResultSetExtractor implements ResultSetExtractor<Map<Long, Book>> {

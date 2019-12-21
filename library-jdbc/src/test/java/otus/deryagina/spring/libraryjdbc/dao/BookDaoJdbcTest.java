@@ -34,6 +34,9 @@ class BookDaoJdbcTest {
     private static final String EXISTING_GENRE_NAME = "Poetry";
     private static final long EXISTING_AUTHOR_ID = 1;
     private static final String EXISTING_AUTHOR_NAME = "First author";
+    private static final String NEW_GIVEN_TITLE = "Updated Title";
+    private static final long GIVEN_BOOK_ID = 2L;
+    private static final long GIVEN_AUTHOR_ID_TO_ADD = 2L ;
 
     @Autowired
     private BookDaoJdbc bookDaoJdbc;
@@ -91,5 +94,22 @@ class BookDaoJdbcTest {
         assertThat(actual.getGenres().get(0)).isEqualToComparingFieldByField(genre);
     }
 
+    @DisplayName("should update title by id")
+    @Test
+    void shouldUpdateTitleById(){
+        bookDaoJdbc.updateBookTitle(GIVEN_ID,NEW_GIVEN_TITLE);
+        Book actual = bookDaoJdbc.findById(GIVEN_ID);
+        assertThat(actual.getTitle()).isEqualTo(NEW_GIVEN_TITLE);
+    }
 
+    @DisplayName("should add author to Book by authorId")
+    @Test
+    void  shouldAddAuthorToBookByAuthorId(){
+        bookDaoJdbc.addAuthorForBook(GIVEN_BOOK_ID,GIVEN_AUTHOR_ID_TO_ADD);
+        Book actual = bookDaoJdbc.findById(GIVEN_BOOK_ID);
+        System.out.println(actual);
+        assertThat(actual.getAuthors().stream().map(Author::getId)).contains(GIVEN_AUTHOR_ID_TO_ADD);
+
+    }
+    //TODO: test for delete mthd
 }
