@@ -4,7 +4,10 @@ package otus.deryagina.spring.libraryjdbc.dao;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import otus.deryagina.spring.libraryjdbc.domain.Author;
 import otus.deryagina.spring.libraryjdbc.domain.Book;
@@ -36,7 +39,7 @@ public class BookDaoJdbc implements BookDao {
 
     @Override
     public Book findById(long id) {
-        Map<String, Object> param = new HashMap<>();
+        Map<String, Object> param = new HashMap<>(1);
         param.put("id", id);
         Map<Long, Book> map = namedParameterJdbcOperations.query("select  b.id, b.title, a.ID as author_id, a.NAME as author,g.Id as genre_id, g.NAME as genre from BOOKS b inner join BOOKS_AUTHORS_CORRELATION BAC on b.ID = BAC.BOOKID\n" +
                 "inner join AUTHORS A on BAC.AUTHORID = A.ID inner join BOOKS_GENRES_CORRELATION BGC on b.ID = BGC.BOOKID\n" +
@@ -63,7 +66,7 @@ public class BookDaoJdbc implements BookDao {
     }
 
     @Override
-    public void insert(Book book) {
+    public long insert(Book book) {
         if (book == null) {
             throw new IllegalArgumentException("Try to insert null book");
         }
@@ -73,11 +76,36 @@ public class BookDaoJdbc implements BookDao {
         if( book.getAuthors() == null || book.getAuthors().isEmpty()){
             throw  new IllegalArgumentException("Try to insert book with null or empty authors");
         }
+        //insert new book , get it's id and insert all correlations
+        //insert in book table
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("title", book.getTitle());
+        KeyHolder kh = new GeneratedKeyHolder();
+        namedParameterJdbcOperations.update("insert into BOOKS (`title`) values (:title)", params, kh);
+        long newBookId  = kh.getKey().longValue();
+        //insert correlations
+        //books_authors_correlation
+        for (Author author:
+             book.getAuthors()) {
+            Map<String, Object> bookAuthorParams = new HashMap<>(2);
+            bookAuthorParams.put("bookId", newBookId);
+            bookAuthorParams.put("authorId", author.getId());
+            namedParameterJdbcOperations.update("insert into books_authors_correlation (bookId, authorId) values (:bookId, :authorId)"
+            ,bookAuthorParams);
+        }
+        //books_genres_correlation
+        for (Genre genre:
+                book.getGenres()) {
+            Map<String, Object> bookGenreParams = new HashMap<>(2);
+            bookGenreParams.put("bookId", newBookId);
+            bookGenreParams.put("genreId", genre.getId());
+            namedParameterJdbcOperations.update("insert into books_genres_correlation (bookId, GENREID) values (:bookId, :genreId)"
+                    ,bookGenreParams);
+        }
+
+        return newBookId;
 
 
-
-
-        //TODO: check authors and genres, insert if they not exist, insert correlations, insert book
     }
 
     private static class BookResultSetExtractor implements ResultSetExtractor<Map<Long, Book>> {

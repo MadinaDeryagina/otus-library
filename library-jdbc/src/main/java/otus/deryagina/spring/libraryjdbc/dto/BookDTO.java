@@ -9,7 +9,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-@EqualsAndHashCode
+@EqualsAndHashCode(exclude = "id")
 public class BookDTO {
     private long id;
     private String title;

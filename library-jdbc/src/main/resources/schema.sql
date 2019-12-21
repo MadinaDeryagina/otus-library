@@ -1,19 +1,19 @@
 drop table if exists genres;
 create table genres
 (
-    id   long primary key,
+    id   long primary key auto_increment,
     name varchar(255)
 );
 drop table if exists books;
 create table books
 (
-    id    long primary key,
+    id    long primary key auto_increment,
     title varchar(255)
 );
 drop table if exists authors;
 create table authors
 (
-    id   long primary key,
+    id   long primary key auto_increment,
     name varchar(255)
 );
 drop table if exists books_authors_correlation;

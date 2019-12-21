@@ -5,8 +5,9 @@ import otus.deryagina.spring.libraryjdbc.dto.BookDTO;
 import java.util.List;
 
 public interface BookService {
-    void addAsNewBook(BookDTO bookDTO);
+    long addAsNewBook(BookDTO bookDTO);
     List<BookDTO> findAllBooks();
     BookDTO findBookById(long id);
     List<BookDTO> findBooksByTitle(String title);
+    boolean updateBook(BookDTO bookToUpdate, BookDTO targetInfo);
 }

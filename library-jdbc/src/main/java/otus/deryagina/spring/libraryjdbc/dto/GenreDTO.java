@@ -1,13 +1,11 @@
 package otus.deryagina.spring.libraryjdbc.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
+import lombok.*;
 
 @Data
 @ToString
 @AllArgsConstructor
+@NoArgsConstructor
 @EqualsAndHashCode
 public class GenreDTO {
     private String name;

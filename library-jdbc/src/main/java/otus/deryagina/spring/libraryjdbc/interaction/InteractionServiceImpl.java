@@ -3,6 +3,7 @@ package otus.deryagina.spring.libraryjdbc.interaction;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+import otus.deryagina.spring.libraryjdbc.domain.Book;
 import otus.deryagina.spring.libraryjdbc.dto.AuthorDTO;
 import otus.deryagina.spring.libraryjdbc.dto.BookDTO;
 import otus.deryagina.spring.libraryjdbc.dto.GenreDTO;
@@ -30,7 +31,8 @@ public class InteractionServiceImpl implements InteractionService {
         }
         List<BookDTO> booksWithSameTitle = bookService.findBooksByTitle(bookDTO.getTitle());
         if (booksWithSameTitle.isEmpty()) {
-            bookService.addAsNewBook(bookDTO);
+            long newBookId = bookService.addAsNewBook(bookDTO);
+            ioStreamsProvider.printInfo(localizationService.getLocalizedMessage("add.book.success", new String[]{String.valueOf(newBookId)}));
             return;
         }
         List<BookDTO> exactlySameBook = booksWithSameTitle.stream().filter(x -> x.equals(bookDTO)).collect(Collectors.toList());
@@ -45,11 +47,25 @@ public class InteractionServiceImpl implements InteractionService {
         } else if (yesOrNo.equalsIgnoreCase(localizationService.getLocalizedMessage("no", null))){
             //which book do you want yo update
             ioStreamsProvider.printInfo(localizationService.getLocalizedMessage("which.to.update",null));
-            //ioStreamsProvider.printInfo();
+            String bookIdToUpdateString = ioStreamsProvider.readData();
+            long bookIdToUpdate = Long.parseLong(bookIdToUpdateString);
+            BookDTO bookDTOToUpdate=null;
+            for (BookDTO currentBook:booksWithSameTitle) {
+                if(currentBook.getId()== bookIdToUpdate){
+                    bookDTOToUpdate = currentBook;
+                }
+            }
+            if(bookDTOToUpdate == null){
+                ioStreamsProvider.printInfo(localizationService.getLocalizedMessage("invalid.input.id",new String[]{String.valueOf(bookIdToUpdate)}));
+            }
+            if(bookService.updateBook(bookDTOToUpdate, bookDTO)){
+                ioStreamsProvider.printInfo(localizationService.getLocalizedMessage("update.success",null));
+            }
+            ioStreamsProvider.printInfo(localizationService.getLocalizedMessage("update.fail",null));
         }
     }
 
-    //TODO: сначала сделать валидацию всех входных парамтеров, потом формировать dto ( вынести в отдельный сервис)
+
     private BookDTO createBookDTOByInputData() {
         BookDTO bookDTO = new BookDTO();
         ioStreamsProvider.printInfo(localizationService.getLocalizedMessage("insert.book.param", new String[]{localizationService.getLocalizedMessage("book.title", null)}));

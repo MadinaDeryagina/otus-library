@@ -3,7 +3,10 @@ package otus.deryagina.spring.libraryjdbc.dao;
 import lombok.AllArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import otus.deryagina.spring.libraryjdbc.domain.Genre;
 
@@ -27,7 +30,7 @@ public class GenreDaoJdbc implements GenreDao {
 
     @Override
     public List<Genre> findGenresByNames(List<String> names) {
-        Map<String, List<String>> params = new HashMap<>();
+        Map<String, List<String>> params = new HashMap<>(1);
         params.put("names", names);
         return namedParameterJdbcOperations.query("select * from genres where name in (:names)",
                 params, new GenreMapper());
@@ -35,7 +38,7 @@ public class GenreDaoJdbc implements GenreDao {
 
     @Override
     public Genre findGenreByName(String name) {
-        Map<String, String> params = new HashMap<>();
+        Map<String, String> params = new HashMap<>(1);
         params.put("name", name);
         Genre genre;
         try {
@@ -46,6 +49,27 @@ public class GenreDaoJdbc implements GenreDao {
             return null;
         }
 
+    }
+
+    @Override
+    public long insert(Genre genre) {
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("name", genre.getName());
+        KeyHolder kh = new GeneratedKeyHolder();
+        namedParameterJdbcOperations.update("insert into GENRES (`name`) values (:name)", params, kh);
+        return kh.getKey().longValue();
+    }
+
+    @Override
+    public Genre findById(long id) {
+        Map<String, Object> params = new HashMap<>(1);
+        params.put("id", id);
+        try {
+            return namedParameterJdbcOperations.queryForObject("select * from GENRES where id =:id",
+                    params, new GenreMapper());
+        } catch (Exception e) {
+            return null;
+        }
     }
 
 

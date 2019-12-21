@@ -3,6 +3,7 @@ package otus.deryagina.spring.libraryjdbc.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
+import org.mapstruct.Named;
 import otus.deryagina.spring.libraryjdbc.domain.Author;
 import otus.deryagina.spring.libraryjdbc.domain.Book;
 import otus.deryagina.spring.libraryjdbc.domain.Genre;
@@ -14,7 +15,7 @@ import java.util.List;
 
 
 @Mapper(componentModel = "spring")
-public interface EntityToDtoMapper {
+public interface ModelMapper {
     @Mappings({
             @Mapping(source = "authors", target = "authorDTOS"),
             @Mapping(source = "genres", target = "genreDTOS")
@@ -24,4 +25,11 @@ public interface EntityToDtoMapper {
     List<GenreDTO> genreEntityListToGenreDtoList(List<Genre> genres);
     AuthorDTO entityToDto(Author author);
     GenreDTO entityToDto(Genre genre);
+    @Named("mapWithoutId")
+    @Mapping(target = "id", ignore = true)
+    Author dtoToEntity(AuthorDTO authorDTO);
+
+    @Named("mapWithoutId")
+    @Mapping(target = "id", ignore = true)
+    Genre dtoToEntity(GenreDTO genreDTO);
 }

@@ -7,10 +7,11 @@ import lombok.*;
 @Getter
 @Setter
 @EqualsAndHashCode
+@NoArgsConstructor
 @ToString
 public class Author {
 
-    private final long id;
-    private final String fullName;
+    private long id;
+    private String fullName;
 
 }

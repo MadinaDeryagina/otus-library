@@ -21,17 +21,17 @@ import java.util.stream.Collectors;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
-@DisplayName("EntityToDtoMapper ")
+@DisplayName("ModelMapper ")
 @ExtendWith(SpringExtension.class)
-class EntityToDtoMapperTest {
+class ModelMapperTest {
 
     @Configuration
-    @ComponentScan(basePackageClasses = {EntityToDtoMapper.class, EntityToDtoMapperImpl.class, EntityToDtoMapperTest.class})
+    @ComponentScan(basePackageClasses = {ModelMapper.class, ModelMapperImpl.class, ModelMapperTest.class})
     public static class BookMapperSpringTestConfiguration {
     }
 
     @Autowired
-    private EntityToDtoMapper entityToDtoMapper;
+    private ModelMapper modelMapper;
 
     private Book book;
 
@@ -47,14 +47,14 @@ class EntityToDtoMapperTest {
 
     @DisplayName("shouldn't be null")
     @Test
-    public void bookMapperIsNotNull() {
-        assertThat(entityToDtoMapper).isNotNull();
+    void bookMapperIsNotNull() {
+        assertThat(modelMapper).isNotNull();
     }
 
     @DisplayName("should have same book title in source entity and target dto")
     @Test
-    public void shouldHaveSameBookTitleInSourceEntityAndTargetDTO() {
-        BookDTO bookDTO = entityToDtoMapper.entityToDto(book);
+    void shouldHaveSameBookTitleInSourceEntityAndTargetDTO() {
+        BookDTO bookDTO = modelMapper.entityToDto(book);
         if (bookDTO == null) {
             fail("bookDto is null");
         }
@@ -63,8 +63,8 @@ class EntityToDtoMapperTest {
 
     @DisplayName("should have same book id in source entity and target dto")
     @Test
-    public void shouldHaveSameBookIdInSourceEntityAndTargetDTO() {
-        BookDTO bookDTO = entityToDtoMapper.entityToDto(book);
+    void shouldHaveSameBookIdInSourceEntityAndTargetDTO() {
+        BookDTO bookDTO = modelMapper.entityToDto(book);
         if (bookDTO == null) {
             fail("bookDto is null");
         }
@@ -73,8 +73,8 @@ class EntityToDtoMapperTest {
 
     @DisplayName("should have not null authorsDTOS in booktDTO")
     @Test
-    public void shouldHaveNotNullAuthorsInBookDTO() {
-        BookDTO bookDTO = entityToDtoMapper.entityToDto(book);
+    void shouldHaveNotNullAuthorsInBookDTO() {
+        BookDTO bookDTO = modelMapper.entityToDto(book);
         if (bookDTO.getAuthorDTOS() == null || bookDTO.getAuthorDTOS().isEmpty()) {
             fail("authors in bookDTO couldn't be null or empty");
         }
@@ -82,8 +82,8 @@ class EntityToDtoMapperTest {
 
     @DisplayName("should have same fullNames in authorDTOS and authors in bookDTO and book")
     @Test
-    public void shouldHaveSameAuthorsNames() {
-        BookDTO bookDTO = entityToDtoMapper.entityToDto(book);
+    void shouldHaveSameAuthorsNames() {
+        BookDTO bookDTO = modelMapper.entityToDto(book);
         List<String> authorsNames = book.getAuthors().stream().map(Author::getFullName).collect(Collectors.toList());
         System.out.println("authors dto: " + bookDTO.getAuthorDTOS());
         assertThat(bookDTO.getAuthorDTOS()).extracting("fullName").containsAll(authorsNames);
@@ -91,16 +91,16 @@ class EntityToDtoMapperTest {
 
     @DisplayName("should have not null genreDTOS in booktDTO")
     @Test
-    public void shouldHaveNotNullGenresInBookDTO() {
-        BookDTO bookDTO = entityToDtoMapper.entityToDto(book);
+    void shouldHaveNotNullGenresInBookDTO() {
+        BookDTO bookDTO = modelMapper.entityToDto(book);
         if (bookDTO.getGenreDTOS() == null || bookDTO.getGenreDTOS().isEmpty()) {
             fail("genres in bookDTO couldn't be null or empty");
         }
     }
     @DisplayName("should have same names in genresDTOS and authors in bookDTO and book")
     @Test
-    public void shouldHaveSameGenresNames() {
-        BookDTO bookDTO = entityToDtoMapper.entityToDto(book);
+    void shouldHaveSameGenresNames() {
+        BookDTO bookDTO = modelMapper.entityToDto(book);
         List<String> genresNames = book.getGenres().stream().map(Genre::getName).collect(Collectors.toList());
         System.out.println("genres dto: " + bookDTO.getGenreDTOS());
         assertThat(bookDTO.getGenreDTOS()).extracting("name").containsAll(genresNames);

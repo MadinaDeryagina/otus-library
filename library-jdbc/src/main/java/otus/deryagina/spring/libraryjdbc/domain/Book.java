@@ -1,9 +1,6 @@
 package otus.deryagina.spring.libraryjdbc.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.util.List;
 
@@ -11,10 +8,11 @@ import java.util.List;
 @Getter
 @Setter
 @ToString
+@NoArgsConstructor
 public class Book {
 
-    private final long id;
-    private final String title;
-    private final List<Author> authors;
-    private final List<Genre> genres;
+    private long id;
+    private String title;
+    private List<Author> authors;
+    private List<Genre> genres;
 }

@@ -1,15 +1,14 @@
 package otus.deryagina.spring.libraryjdbc.domain;
 
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
-@RequiredArgsConstructor
+@AllArgsConstructor
 @Data
 @ToString
+@NoArgsConstructor
 public class Genre {
 
-    private final long id;
-    private final String name;
+    private  long id;
+    private  String name;
 
 }

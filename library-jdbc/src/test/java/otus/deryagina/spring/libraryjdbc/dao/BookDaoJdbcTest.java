@@ -7,8 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import otus.deryagina.spring.libraryjdbc.domain.Author;
 import otus.deryagina.spring.libraryjdbc.domain.Book;
+import otus.deryagina.spring.libraryjdbc.domain.Genre;
 
+import java.util.Collections;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -26,6 +29,11 @@ class BookDaoJdbcTest {
     private static final String GIVEN_TITLE = "Same title dif authors";
     private static final int EXPECTED_NUMBER_OF_BOOKS_WITH_GIVEN_TITLE = 2;
     private static final String NO_BOOK_TITLE = "No book with this title";
+    private static final String NEW_BOOK_TITLE = "New book title";
+    private static final long EXISTING_GENRE_ID = 1;
+    private static final String EXISTING_GENRE_NAME = "Poetry";
+    private static final long EXISTING_AUTHOR_ID = 1;
+    private static final String EXISTING_AUTHOR_NAME = "First author";
 
     @Autowired
     private BookDaoJdbc bookDaoJdbc;
@@ -67,6 +75,21 @@ class BookDaoJdbcTest {
         assertThat(bookDaoJdbc.findBooksByTitle(NO_BOOK_TITLE)).isEmpty();
     }
 
+    @DisplayName("should add book to DB")
+    @Test
+    void shouldInsertBook() {
+        Book book = new Book();
+        book.setTitle(NEW_BOOK_TITLE);
+        Genre genre = new Genre(EXISTING_GENRE_ID, EXISTING_GENRE_NAME);
+        book.setGenres(Collections.singletonList(genre));
+        Author author = new Author(EXISTING_AUTHOR_ID, EXISTING_AUTHOR_NAME);
+        book.setAuthors(Collections.singletonList(author));
+        long newId = bookDaoJdbc.insert(book);
+        Book actual = bookDaoJdbc.findById(newId);
+        assertThat(actual.getTitle()).isEqualTo(book.getTitle());
+        assertThat(actual.getAuthors().get(0)).isEqualToComparingFieldByField(author);
+        assertThat(actual.getGenres().get(0)).isEqualToComparingFieldByField(genre);
+    }
 
 
 }

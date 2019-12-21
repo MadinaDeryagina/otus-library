@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import otus.deryagina.spring.libraryjdbc.dao.GenreDao;
 import otus.deryagina.spring.libraryjdbc.domain.Genre;
 import otus.deryagina.spring.libraryjdbc.dto.GenreDTO;
-import otus.deryagina.spring.libraryjdbc.mapper.EntityToDtoMapper;
+import otus.deryagina.spring.libraryjdbc.mapper.ModelMapper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +15,7 @@ import java.util.List;
 public class GenreServiceImpl implements GenreService {
 
     private final GenreDao genreDao;
-    private final EntityToDtoMapper entityToDtoMapper;
+    private final ModelMapper modelMapper;
 
     @Override
     public List<GenreDTO> findAll() {
@@ -23,7 +23,7 @@ public class GenreServiceImpl implements GenreService {
         if( genres == null || genres.isEmpty()){
             return new ArrayList<>();
         }
-        return entityToDtoMapper.genreEntityListToGenreDtoList(genres);
+        return modelMapper.genreEntityListToGenreDtoList(genres);
     }
 
     @Override
@@ -32,6 +32,6 @@ public class GenreServiceImpl implements GenreService {
         if( genre == null){
             return null;
         }
-        return entityToDtoMapper.entityToDto(genre);
+        return modelMapper.entityToDto(genre);
     }
 }
