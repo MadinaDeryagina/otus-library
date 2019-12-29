@@ -130,18 +130,38 @@ public class BookDaoJdbc implements BookDao {
         Map<String, Object> bookAuthorParams = new HashMap<>(2);
         bookAuthorParams.put("bookId", bookId);
         bookAuthorParams.put("authorId", authorId);
-        namedParameterJdbcOperations.update("delete from books_authors_correlation where BOOKID =:bookId and AUTHORID =:authorId)"
+        namedParameterJdbcOperations.update("delete from books_authors_correlation where BOOKID = :bookId and AUTHORID = :authorId"
                 ,bookAuthorParams);
     }
 
     @Override
-    public void addGenreForBook(long id, long id1) {
-        //TODO: implement mthd
+    public void addGenreForBook(long bookId, long genreId) {
+        Map<String, Object> bookGenreParams = new HashMap<>(2);
+        bookGenreParams.put("bookId", bookId);
+        bookGenreParams.put("genreId", genreId);
+        namedParameterJdbcOperations.update("insert into books_genres_correlation (bookId, genreId) values (:bookId, :genreId)"
+                ,bookGenreParams);
     }
 
     @Override
-    public void deleteGenreFromBook(long id, long id1) {
-        //TODO: implement mthd
+    public void deleteGenreFromBook(long bookId, long genreId) {
+        Map<String, Object> bookGenreParams = new HashMap<>(2);
+        bookGenreParams.put("bookId", bookId);
+        bookGenreParams.put("genreId", genreId);
+        namedParameterJdbcOperations.update("delete from books_genres_correlation where BOOKID = :bookId and GENREID = :genreId"
+                ,bookGenreParams);
+    }
+
+    @Override
+    public void deleteBookById(long id) {
+        Map<String, Object> param = new HashMap<>(1);
+        param.put("bookId", id);
+        namedParameterJdbcOperations.update("delete from books_authors_correlation where BOOKID = :bookId"
+                ,param);
+        namedParameterJdbcOperations.update("delete from books_genres_correlation where BOOKID = :bookId"
+                ,param);
+        namedParameterJdbcOperations.update("delete from books where id = :bookId"
+                ,param);
     }
 
     private static class BookResultSetExtractor implements ResultSetExtractor<Map<Long, Book>> {

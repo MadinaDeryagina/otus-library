@@ -1,6 +1,6 @@
 application:
   version: '@project.version@'
-  locale-name: ru_RU
+  locale-name: eng_US
 spring:
 #  datasource:
 #    url: jdbc:h2:tcp://localhost/~/testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE

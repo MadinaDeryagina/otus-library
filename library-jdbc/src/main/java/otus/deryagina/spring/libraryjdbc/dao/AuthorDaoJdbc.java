@@ -51,6 +51,11 @@ public class AuthorDaoJdbc implements AuthorDao {
         }
     }
 
+    @Override
+    public List<Author> findAll() {
+        return namedParameterJdbcOperations.query("select * from AUTHORS", new AuthorMapper());
+    }
+
     private static class AuthorMapper implements RowMapper<Author> {
         @Override
         public Author mapRow(ResultSet resultSet, int i) throws SQLException {

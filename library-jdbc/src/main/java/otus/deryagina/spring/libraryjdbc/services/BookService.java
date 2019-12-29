@@ -6,8 +6,14 @@ import java.util.List;
 
 public interface BookService {
     long addAsNewBook(BookDTO bookDTO);
+
     List<BookDTO> findAllBooks();
+
     BookDTO findBookById(long id);
+
     List<BookDTO> findBooksByTitle(String title);
-    boolean updateBook(BookDTO bookToUpdate, BookDTO targetInfo);
+
+    boolean updateBook(long id, BookDTO targetInfo);
+
+    void deleteBookById(long id);
 }

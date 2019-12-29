@@ -1,7 +1,11 @@
 package otus.deryagina.spring.libraryjdbc.interaction;
 
-import otus.deryagina.spring.libraryjdbc.dto.BookDTO;
+
 
 public interface InteractionService {
     void askToAddBook();
+
+    void updateBookById(long id);
+
+    void deleteBookById(long id);
 }

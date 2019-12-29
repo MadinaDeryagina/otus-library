@@ -1,6 +1,7 @@
 package otus.deryagina.spring.libraryjdbc.interaction;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import otus.deryagina.spring.libraryjdbc.domain.Book;
@@ -15,6 +16,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class InteractionServiceImpl implements InteractionService {
@@ -30,6 +32,7 @@ public class InteractionServiceImpl implements InteractionService {
             return;
         }
         List<BookDTO> booksWithSameTitle = bookService.findBooksByTitle(bookDTO.getTitle());
+        log.info("Books With same title: "+booksWithSameTitle.toString());
         if (booksWithSameTitle.isEmpty()) {
             long newBookId = bookService.addAsNewBook(bookDTO);
             ioStreamsProvider.printInfo(localizationService.getLocalizedMessage("add.book.success", new String[]{String.valueOf(newBookId)}));
@@ -49,20 +52,46 @@ public class InteractionServiceImpl implements InteractionService {
             ioStreamsProvider.printInfo(localizationService.getLocalizedMessage("which.to.update",null));
             String bookIdToUpdateString = ioStreamsProvider.readData();
             long bookIdToUpdate = Long.parseLong(bookIdToUpdateString);
-            BookDTO bookDTOToUpdate=null;
+            boolean isValidId=false;
             for (BookDTO currentBook:booksWithSameTitle) {
+                log.info("Book with same title: " + currentBook.toString());
                 if(currentBook.getId()== bookIdToUpdate){
-                    bookDTOToUpdate = currentBook;
+                    isValidId=true;
                 }
             }
-            if(bookDTOToUpdate == null){
+            if(!isValidId){
                 ioStreamsProvider.printInfo(localizationService.getLocalizedMessage("invalid.input.id",new String[]{String.valueOf(bookIdToUpdate)}));
+                return;
             }
-            if(bookService.updateBook(bookDTOToUpdate, bookDTO)){
+            if(bookService.updateBook(bookIdToUpdate, bookDTO)){
                 ioStreamsProvider.printInfo(localizationService.getLocalizedMessage("update.success",null));
+            }else {
+                ioStreamsProvider.printInfo(localizationService.getLocalizedMessage("update.fail", null));
             }
-            ioStreamsProvider.printInfo(localizationService.getLocalizedMessage("update.fail",null));
         }
+    }
+
+    @Override
+    public void updateBookById(long id) {
+        if(bookService.findBookById(id)==null){
+            ioStreamsProvider.printInfo(localizationService.getLocalizedMessage("invalid.input.id",new String[]{String.valueOf(id)}));
+            return;
+        }
+        BookDTO bookDTO = createBookDTOByInputData();
+        if (bookDTO == null) {
+            return;
+        }
+        bookService.updateBook(id,bookDTO);
+
+    }
+
+    @Override
+    public void deleteBookById(long id) {
+        if(bookService.findBookById(id)==null){
+            ioStreamsProvider.printInfo(localizationService.getLocalizedMessage("invalid.input.id",new String[]{String.valueOf(id)}));
+            return;
+        }
+        bookService.deleteBookById(id);
     }
 
 

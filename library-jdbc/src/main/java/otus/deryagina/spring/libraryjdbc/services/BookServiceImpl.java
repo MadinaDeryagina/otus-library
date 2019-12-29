@@ -118,28 +118,37 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public boolean updateBook(BookDTO bookToUpdate, BookDTO targetInfo) {
+    public boolean updateBook(long id, BookDTO targetInfo) {
         //bookToUpdate id is id from db
+        Book bookToUpdate = bookDao.findById(id);
         //compare bookToUpdate with targetInfo to understand what to update
-        boolean isUpdated = false;
+        boolean isUpdated=false;
         if(!bookToUpdate.getTitle().equalsIgnoreCase(targetInfo.getTitle())){
             bookDao.updateBookTitle(bookToUpdate.getId(),targetInfo.getTitle());
             isUpdated = true;
         }
-        isUpdated = isAuthorUpdated(bookToUpdate, targetInfo);
-
+        boolean isAuthorUpdated =isAuthorUpdated(bookToUpdate, targetInfo);
+        isUpdated = isUpdated||isAuthorUpdated;
+        boolean isGenreUpdated =isGenreUpdated(bookToUpdate,targetInfo);
+        isUpdated = isUpdated||isGenreUpdated;
         return isUpdated;
     }
 
-    private boolean isAuthorUpdated(BookDTO bookToUpdate, BookDTO targetInfo) {
+    @Override
+    public void deleteBookById(long id) {
+        bookDao.deleteBookById(id);
+    }
+
+    private boolean isAuthorUpdated(Book bookToUpdate, BookDTO targetInfo) {
         boolean isUpdated = false;
         List<String> targetInfoAuthorsNames = targetInfo.getAuthorDTOS().stream()
                 .map(AuthorDTO::getFullName).collect(Collectors.toList());
-        List<String> currentAuthorsNames = bookToUpdate.getAuthorDTOS().stream()
-                .map(AuthorDTO::getFullName).collect(Collectors.toList());
+        List<String> currentAuthorsNames = bookToUpdate.getAuthors().stream()
+                .map(Author::getFullName).collect(Collectors.toList());
 
         List<String> authorsNamesToAddToBook = targetInfoAuthorsNames.stream()
                 .filter(x-> !currentAuthorsNames.contains(x)).collect(Collectors.toList());
+
         HashSet<String> authorNamesNotInDb = new HashSet<>(authorsNamesToAddToBook);
         if(!authorsNamesToAddToBook.isEmpty()){
             List<Author> authorsFromDb = authorDao.findAuthorsByNames(authorsNamesToAddToBook);
@@ -158,24 +167,25 @@ public class BookServiceImpl implements BookService {
               }
           }
         }
-        List<String> authorNamesToDeleteFromBook = bookToUpdate.getAuthorDTOS()
-                .stream().map(AuthorDTO::getFullName)
-                .filter(x->!targetInfoAuthorsNames.contains(x))
+        List<String> authorNamesToDeleteFromBook = bookToUpdate.getAuthors()
+                .stream().map(Author::getFullName)
+                .filter(x -> !targetInfoAuthorsNames.contains(x))
                 .collect(Collectors.toList());
         if(!authorNamesToDeleteFromBook.isEmpty()){
             List<Author> authorToDeleteFromBook = authorDao.findAuthorsByNames(authorNamesToDeleteFromBook);
             for(Author currentAuthor : authorToDeleteFromBook){
                 bookDao.deleteAuthorFromBook(bookToUpdate.getId(),currentAuthor.getId());
+                isUpdated=true;
             }
         }
         return isUpdated;
     }
-    private boolean isGenreUpdated(BookDTO bookToUpdate, BookDTO targetInfo) {
+    private boolean isGenreUpdated(Book bookToUpdate, BookDTO targetInfo) {
         boolean isUpdated = false;
         List<String> targetInfoGenresNames = targetInfo.getGenreDTOS().stream()
                 .map(GenreDTO::getName).collect(Collectors.toList());
-        List<String> currentGenresNames = bookToUpdate.getGenreDTOS().stream()
-                .map(GenreDTO::getName).collect(Collectors.toList());
+        List<String> currentGenresNames = bookToUpdate.getGenres().stream()
+                .map(Genre::getName).collect(Collectors.toList());
 
         List<String> genresNamesToAddToBook = targetInfoGenresNames.stream()
                 .filter(x-> !currentGenresNames.contains(x)).collect(Collectors.toList());
@@ -197,14 +207,15 @@ public class BookServiceImpl implements BookService {
                 }
             }
         }
-        List<String> genreNamesToDeleteFromBook = bookToUpdate.getGenreDTOS()
-                .stream().map(GenreDTO::getName)
+        List<String> genreNamesToDeleteFromBook = bookToUpdate.getGenres()
+                .stream().map(Genre::getName)
                 .filter(x->!targetInfoGenresNames.contains(x))
                 .collect(Collectors.toList());
         if(!genreNamesToDeleteFromBook.isEmpty()){
             List<Genre> genreToDeleteFromBook = genreDao.findGenresByNames(genreNamesToDeleteFromBook);
             for(Genre currentGenre : genreToDeleteFromBook){
                 bookDao.deleteGenreFromBook(bookToUpdate.getId(),currentGenre.getId());
+                isUpdated=true;
             }
         }
         return isUpdated;

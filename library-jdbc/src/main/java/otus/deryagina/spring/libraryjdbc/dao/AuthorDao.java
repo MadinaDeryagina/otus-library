@@ -8,4 +8,5 @@ public interface AuthorDao {
     List<Author> findAuthorsByNames(List<String> authorsName);
     long insert(Author author);
     Author findById(long id);
+    List<Author> findAll();
 }

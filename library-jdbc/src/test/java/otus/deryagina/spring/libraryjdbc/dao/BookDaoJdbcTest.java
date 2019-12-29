@@ -111,5 +111,11 @@ class BookDaoJdbcTest {
         assertThat(actual.getAuthors().stream().map(Author::getId)).contains(GIVEN_AUTHOR_ID_TO_ADD);
 
     }
-    //TODO: test for delete mthd
+    @DisplayName("should Correctly Delete Authors From Existing BookId")
+    @Test
+    void shouldCorrectlyDeleteAuthorsFromExistingBookId(){
+        bookDaoJdbc.deleteBookById(GIVEN_ID);
+        assertThat(bookDaoJdbc.findById(GIVEN_ID)).isNull();
+
+    }
 }

@@ -23,6 +23,7 @@ public interface ModelMapper {
     BookDTO entityToDto(Book book);
     List<BookDTO>  entityToDto(List<Book> books);
     List<GenreDTO> genreEntityListToGenreDtoList(List<Genre> genres);
+    List<AuthorDTO> authorEntityListToAuthorDtoList(List<Author> authors);
     AuthorDTO entityToDto(Author author);
     GenreDTO entityToDto(Genre genre);
     @Named("mapWithoutId")
