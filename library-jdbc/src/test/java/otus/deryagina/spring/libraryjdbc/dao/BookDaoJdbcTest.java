@@ -2,11 +2,9 @@ package otus.deryagina.spring.libraryjdbc.dao;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import otus.deryagina.spring.libraryjdbc.domain.Author;
 import otus.deryagina.spring.libraryjdbc.domain.Book;
 import otus.deryagina.spring.libraryjdbc.domain.Genre;
@@ -17,7 +15,6 @@ import java.util.stream.Collectors;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("Dao for work with books")
-@ExtendWith(SpringExtension.class)
 @Import({BookDaoJdbc.class,GenreDaoJdbc.class})
 @JdbcTest
 class BookDaoJdbcTest {

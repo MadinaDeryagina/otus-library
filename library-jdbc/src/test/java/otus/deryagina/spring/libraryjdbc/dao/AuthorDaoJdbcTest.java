@@ -3,11 +3,9 @@ package otus.deryagina.spring.libraryjdbc.dao;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import otus.deryagina.spring.libraryjdbc.domain.Author;
 
 import java.util.ArrayList;
@@ -17,7 +15,6 @@ import java.util.stream.Collectors;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("Dao for work with authors")
-@ExtendWith(SpringExtension.class)
 @Import(AuthorDaoJdbc.class)
 @JdbcTest
 class AuthorDaoJdbcTest {
