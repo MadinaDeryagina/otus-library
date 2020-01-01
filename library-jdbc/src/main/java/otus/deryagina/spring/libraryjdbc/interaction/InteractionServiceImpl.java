@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
-import otus.deryagina.spring.libraryjdbc.domain.Book;
 import otus.deryagina.spring.libraryjdbc.dto.AuthorDTO;
 import otus.deryagina.spring.libraryjdbc.dto.BookDTO;
 import otus.deryagina.spring.libraryjdbc.dto.GenreDTO;
@@ -32,7 +31,6 @@ public class InteractionServiceImpl implements InteractionService {
             return;
         }
         List<BookDTO> booksWithSameTitle = bookService.findBooksByTitle(bookDTO.getTitle());
-        log.info("Books With same title: "+booksWithSameTitle.toString());
         if (booksWithSameTitle.isEmpty()) {
             long newBookId = bookService.addAsNewBook(bookDTO);
             ioStreamsProvider.printInfo(localizationService.getLocalizedMessage("add.book.success", new String[]{String.valueOf(newBookId)}));
@@ -43,6 +41,10 @@ public class InteractionServiceImpl implements InteractionService {
             ioStreamsProvider.printInfo(localizationService.getLocalizedMessage("same.book.in.lib", new String[]{exactlySameBook.toString()}));
             return;
         }
+        chooseToUpdateOrAddAsNew(bookDTO, booksWithSameTitle);
+    }
+
+    private void chooseToUpdateOrAddAsNew(BookDTO bookDTO, List<BookDTO> booksWithSameTitle) {
         ioStreamsProvider.printInfo(localizationService.getLocalizedMessage("found.books.with.same.title", new String[]{booksWithSameTitle.toString()}));
         String yesOrNo = ioStreamsProvider.readData();
         if (yesOrNo.equalsIgnoreCase(localizationService.getLocalizedMessage("yes", null))) {
@@ -54,7 +56,6 @@ public class InteractionServiceImpl implements InteractionService {
             long bookIdToUpdate = Long.parseLong(bookIdToUpdateString);
             boolean isValidId=false;
             for (BookDTO currentBook:booksWithSameTitle) {
-                log.info("Book with same title: " + currentBook.toString());
                 if(currentBook.getId()== bookIdToUpdate){
                     isValidId=true;
                 }
@@ -107,15 +108,12 @@ public class InteractionServiceImpl implements InteractionService {
         }
         ioStreamsProvider.printInfo(localizationService.getLocalizedMessage("insert.book.param", new String[]{localizationService.getLocalizedMessage("book.authors", null)})
                 + localizationService.getLocalizedMessage("use.comma", null));
-        String authors = ioStreamsProvider.readData();
-        if (isInputValid(authors)) {
-            String[] authorsNames = authors.split("\\s*,\\s*");
-            List<AuthorDTO> authorDTOS = Arrays.stream(authorsNames).map(AuthorDTO::new).collect(Collectors.toList());
-            bookDTO.setAuthorDTOS(authorDTOS);
-        } else {
-            ioStreamsProvider.printInfo(localizationService.getLocalizedMessage("param.not.null", new String[]{localizationService.getLocalizedMessage("book.authors", null)}));
-            return null;
-        }
+        if (askAndAddAuthors(bookDTO)) return null;
+        if (askAndAddGenres(bookDTO)) return null;
+        return bookDTO;
+    }
+
+    private boolean askAndAddGenres(BookDTO bookDTO) {
         ioStreamsProvider.printInfo(localizationService.getLocalizedMessage("insert.book.param", new String[]{localizationService.getLocalizedMessage("book.genres", null)})
                 + localizationService.getLocalizedMessage("use.comma", null));
         String genres = ioStreamsProvider.readData();
@@ -125,9 +123,22 @@ public class InteractionServiceImpl implements InteractionService {
             bookDTO.setGenreDTOS(genreDTOS);
         } else {
             ioStreamsProvider.printInfo(localizationService.getLocalizedMessage("param.not.null", new String[]{localizationService.getLocalizedMessage("book.genres", null)}));
-            return null;
+            return true;
         }
-        return bookDTO;
+        return false;
+    }
+
+    private boolean askAndAddAuthors(BookDTO bookDTO) {
+        String authors = ioStreamsProvider.readData();
+        if (isInputValid(authors)) {
+            String[] authorsNames = authors.split("\\s*,\\s*");
+            List<AuthorDTO> authorDTOS = Arrays.stream(authorsNames).map(AuthorDTO::new).collect(Collectors.toList());
+            bookDTO.setAuthorDTOS(authorDTOS);
+        } else {
+            ioStreamsProvider.printInfo(localizationService.getLocalizedMessage("param.not.null", new String[]{localizationService.getLocalizedMessage("book.authors", null)}));
+            return true;
+        }
+        return false;
     }
 
     private boolean isInputValid(String input) {
