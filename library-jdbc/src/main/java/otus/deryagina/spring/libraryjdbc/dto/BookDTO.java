@@ -15,4 +15,14 @@ public class BookDTO {
     private String title;
     private List<AuthorDTO> authorDTOS;
     private List<GenreDTO> genreDTOS;
+
+    @Override
+    public String toString() {
+        return "Book: " +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", authors=" + authorDTOS +
+                ", genres=" + genreDTOS +
+                '}';
+    }
 }

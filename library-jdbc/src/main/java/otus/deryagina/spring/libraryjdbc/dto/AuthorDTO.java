@@ -11,4 +11,9 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode
 public class AuthorDTO {
     private String fullName;
+
+    @Override
+    public String toString() {
+        return fullName;
+    }
 }

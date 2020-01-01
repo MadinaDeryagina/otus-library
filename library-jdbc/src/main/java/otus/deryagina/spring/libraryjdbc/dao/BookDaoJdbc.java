@@ -151,13 +151,10 @@ public class BookDaoJdbc implements BookDao {
     public void deleteBookById(long id) {
         Map<String, Object> param = new HashMap<>(1);
         param.put("bookId", id);
-        namedParameterJdbcOperations.update("delete from books_authors_correlation where BOOKID = :bookId"
-                ,param);
-        namedParameterJdbcOperations.update("delete from books_genres_correlation where BOOKID = :bookId"
-                ,param);
         namedParameterJdbcOperations.update("delete from books where id = :bookId"
                 ,param);
     }
+
     private List<BookGenreRelation> getAllBookGenreRelations() {
         return namedParameterJdbcOperations.query("select bookId, genreId from BOOKS_GENRES_CORRELATION sc order by BOOKID, GENREID",
                 (rs, i) -> new BookGenreRelation(rs.getLong(1), rs.getLong(2)));

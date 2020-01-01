@@ -21,14 +21,14 @@ create table books_authors_correlation
 (
     bookId   long not null,
     authorId long not null,
-    foreign key (bookId) references books (id),
-    foreign key (authorId) references authors (id)
+    foreign key (bookId) references books (id) ON DELETE CASCADE,
+    foreign key (authorId) references authors (id) ON DELETE CASCADE
 );
 drop table if exists books_genres_correlation;
 create table books_genres_correlation
 (
     bookId   long not null,
     genreId long not null,
-    foreign key (bookId) references books (id),
-    foreign key (genreId) references genres (id)
+    foreign key (bookId) references books (id) ON DELETE CASCADE,
+    foreign key (genreId) references genres (id) ON DELETE CASCADE
 );

@@ -6,11 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
-import otus.deryagina.spring.libraryjdbc.domain.Author;
-import otus.deryagina.spring.libraryjdbc.domain.Book;
-import otus.deryagina.spring.libraryjdbc.domain.Genre;
+import otus.deryagina.spring.libraryjdbc.domain.*;
 
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -112,10 +112,16 @@ class BookDaoJdbcTest {
         assertThat(actual.getAuthors().stream().map(Author::getId)).contains(GIVEN_AUTHOR_ID_TO_ADD);
 
     }
-//    @DisplayName("should Correctly Delete Authors From Existing BookId")
-//    @Test
-//    void shouldCorrectlyDeleteAuthorsFromExistingBookId(){
-//        bookDaoJdbc.deleteBookById(GIVEN_ID);
-//        assertThat(bookDaoJdbc.findById(GIVEN_ID)).isNull();
-//    }
+    @DisplayName("should Correctly Delete book by existing  BookId")
+    @Test
+    void shouldCorrectlyDeleteBookByExistingBookId(){
+        bookDaoJdbc.deleteBookById(GIVEN_ID);
+        assertThat(bookDaoJdbc.findById(GIVEN_ID)).isNull();
+        Map<String,Object> map = new HashMap<>(1);
+        map.put("bookId",GIVEN_ID);
+        assertThat(namedParameterJdbcOperations.query("select bookId, genreId from BOOKS_GENRES_CORRELATION sc where bookId =:bookId order by BOOKID, GENREID",map,
+        (rs, i) -> new BookGenreRelation(rs.getLong(1), rs.getLong(2)))).isEmpty();
+        assertThat(namedParameterJdbcOperations.query("select bookId, AUTHORID from BOOKS_AUTHORS_CORRELATION sc where bookId =:bookId order by BOOKID, AUTHORID",map,
+                (rs, i) -> new BookAuthorRelation(rs.getLong(1), rs.getLong(2)))).isEmpty();
+    }
 }
