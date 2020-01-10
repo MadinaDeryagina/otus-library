@@ -88,16 +88,27 @@ public class BookDaoJdbc implements BookDao {
         namedParameterJdbcOperations.update("insert into BOOKS (`title`) values (:title)", params, kh);
         long newBookId  = kh.getKey().longValue();
         //insert correlations
+        //----new version-----
+
         //books_authors_correlation
-        for (Author author:
-             book.getAuthors()) {
-            addAuthorForBook(newBookId,author.getId());
-        }
+        List<Long> authorsIds = book.getAuthors().stream().map(Author::getId).collect(Collectors.toList());
+        addNewAuthorsToBook(newBookId, authorsIds);
         //books_genres_correlation
-        for (Genre genre:
-                book.getGenres()) {
-            addGenreForBook(newBookId,genre.getId());
-        }
+        List<Long> genresIds = book.getGenres().stream().map(Genre::getId).collect(Collectors.toList());
+        addNewGenresToBook(newBookId,genresIds);
+
+        //--------
+//        //books_authors_correlation
+//
+//        for (Author author:
+//             book.getAuthors()) {
+//            addAuthorForBook(newBookId,author.getId());
+//        }
+        //books_genres_correlation
+//        for (Genre genre:
+//                book.getGenres()) {
+//            addGenreForBook(newBookId,genre.getId());
+//        }
 
         return newBookId;
 
@@ -153,6 +164,54 @@ public class BookDaoJdbc implements BookDao {
         param.put("bookId", id);
         namedParameterJdbcOperations.update("delete from books where id = :bookId"
                 ,param);
+    }
+
+    @Override
+    public void deleteAllAuthorsFromBook(long bookId) {
+        Map<String, Object> bookParams = new HashMap<>(1);
+        bookParams.put("bookId", bookId);
+        namedParameterJdbcOperations.update("delete from books_authors_correlation where BOOKID = :bookId"
+                ,bookParams);
+    }
+
+    @Override
+    public void addNewAuthorsToBook(long bookId, List<Long> targetInfoAuthorsIds) {
+        int size=targetInfoAuthorsIds.size();
+        List<Map<String,Object>> maps= new ArrayList<>(size);
+        for (int i = 0; i < size; i++) {
+            Map<String, Object> currentParam = new HashMap<>();
+            currentParam.put("bookId",bookId);
+            currentParam.put("authorId", targetInfoAuthorsIds.get(i));
+            maps.add(currentParam);
+        }
+        Map<String,Object>[]myDataArray=new HashMap[size];
+        Map<String,Object>[] array = maps.toArray(myDataArray);
+        namedParameterJdbcOperations.batchUpdate("insert into books_authors_correlation (bookId, authorId) values (:bookId, :authorId)",array);
+    }
+
+    @Override
+    public void deleteAllGenresFromBook(long bookId) {
+        Map<String, Object> bookParams = new HashMap<>(1);
+        bookParams.put("bookId", bookId);
+        namedParameterJdbcOperations.update("delete from BOOKS_GENRES_CORRELATION where BOOKID = :bookId"
+                ,bookParams);
+    }
+
+    @Override
+    public void addNewGenresToBook(long bookId, List<Long> targetGenresIds) {
+        int size=targetGenresIds.size();
+        List<Map<String,Object>> maps= new ArrayList<>(size);
+        for (int i = 0; i < size; i++) {
+            Map<String, Object> currentParam = new HashMap<>();
+            currentParam.put("bookId",bookId);
+            currentParam.put("genreId", targetGenresIds.get(i));
+            maps.add(currentParam);
+        }
+        Map<String,Object>[]myDataArray=new HashMap[size];
+        Map<String,Object>[] array = maps.toArray(myDataArray);
+        namedParameterJdbcOperations.batchUpdate("insert into books_genres_correlation (bookId, genreId) values (:bookId, :genreId)",array);
+
+
     }
 
     private List<BookGenreRelation> getAllBookGenreRelations() {

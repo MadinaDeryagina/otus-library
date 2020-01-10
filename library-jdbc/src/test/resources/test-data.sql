@@ -15,6 +15,8 @@ insert into AUTHORS(id, name)
 values (1, 'First author');
 insert into AUTHORS(id, name)
 VALUES (2, 'Second author');
+insert into AUTHORS(id, name)
+VALUES (3, 'Third author');
 insert into BOOKS_AUTHORS_CORRELATION
 values (1, 1);
 insert into BOOKS_AUTHORS_CORRELATION

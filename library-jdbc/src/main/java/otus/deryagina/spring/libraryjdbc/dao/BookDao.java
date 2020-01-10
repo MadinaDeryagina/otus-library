@@ -1,7 +1,6 @@
 package otus.deryagina.spring.libraryjdbc.dao;
 
 import otus.deryagina.spring.libraryjdbc.domain.Book;
-import otus.deryagina.spring.libraryjdbc.dto.BookDTO;
 
 import java.util.List;
 
@@ -25,4 +24,12 @@ public interface BookDao {
     void deleteGenreFromBook(long bookId, long genreId);
 
     void deleteBookById(long id);
+
+    void deleteAllAuthorsFromBook(long bookId);
+
+    void addNewAuthorsToBook(long bookId, List<Long> targetInfoAuthors);
+
+    void deleteAllGenresFromBook(long bookId);
+
+    void addNewGenresToBook(long bookId, List<Long> targetGenresIds);
 }
