@@ -30,8 +30,8 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public long addAsNewBook(BookDTO bookDTO) {
-        List<Author> authors = prepareAuthorForNewBook(bookDTO);
-        List<Genre> genres = prepareGenresForNewBook(bookDTO);
+        List<Author> authors = getAndInsertAuthors(bookDTO.getAuthorDTOS());
+        List<Genre> genres = getAndInsertGenres(bookDTO.getGenreDTOS());
         Book book = new Book();
         book.setTitle(bookDTO.getTitle());
         book.setAuthors(authors);
@@ -39,8 +39,13 @@ public class BookServiceImpl implements BookService {
         return bookDao.insert(book);
     }
 
-    private List<Genre> prepareGenresForNewBook(BookDTO bookDTO) {
-        List<GenreDTO> genreDTOS = bookDTO.getGenreDTOS();
+    /**
+     *
+     * @param genreDTOS
+     * @return list of corresponding genres from database( if genre not in database insert it and return
+     * it with id in result list)
+     */
+    private List<Genre> getAndInsertGenres(List<GenreDTO> genreDTOS) {
         List<String> genresNames = genreDTOS.stream()
                 .map(GenreDTO::getName).collect(Collectors.toList());
         // check if there are genres,which are already in the library
@@ -48,7 +53,7 @@ public class BookServiceImpl implements BookService {
         List<String> genresNamesFromDb = genresFromDb.stream().
                 map(Genre::getName).collect(Collectors.toList());
         //get existing genres if they are, create new for those who are not
-        List<Genre> genresForNewBook = new ArrayList<>(genresFromDb);
+        List<Genre> resultGenres = new ArrayList<>(genresFromDb);
         // if there are genres who are not in db
         if (genresNames.size() > genresNamesFromDb.size()) {
             List<Genre> genresToSave = genreDTOS.stream().filter(x -> !genresNamesFromDb.contains(x.getName()))
@@ -57,20 +62,25 @@ public class BookServiceImpl implements BookService {
                     genresToSave) {
                 long idFromDb = genreDao.insert(genre);
                 genre.setId(idFromDb);
-                genresForNewBook.add(genre);
+                resultGenres.add(genre);
             }
         }
-        return genresForNewBook;
+        return resultGenres;
     }
 
-    private List<Author> prepareAuthorForNewBook(BookDTO bookDTO) {
-        List<AuthorDTO> authorDTOS = bookDTO.getAuthorDTOS();
+    /**
+     *
+     * @param authorDTOS
+     * @return list of corresponding authors from database( if author not in database insert it and return
+     * it with id in result list)
+     */
+    private List<Author> getAndInsertAuthors(List<AuthorDTO> authorDTOS) {
         List<String> authorsNames = authorDTOS.stream()
                 .map(AuthorDTO::getFullName).collect(Collectors.toList());
         // check if there are authors,who are already in the library
         List<Author> authorsFromDb = authorDao.findAuthorsByNames(authorsNames);
         //get existing authors if they are, create new for those who are not
-        List<Author> authorsForNewBook = new ArrayList<>(authorsFromDb);
+        List<Author> resultAuthors = new ArrayList<>(authorsFromDb);
         // if there are authors who are not in db
         if (authorsNames.size() > authorsFromDb.size()) {
             List<String> authorsNamesFromDb = authorsFromDb.stream().
@@ -81,10 +91,10 @@ public class BookServiceImpl implements BookService {
                     authorsToSave) {
                 long idFromDb = authorDao.insert(author);
                 author.setId(idFromDb);
-                authorsForNewBook.add(author);
+                resultAuthors.add(author);
             }
         }
-        return authorsForNewBook;
+        return resultAuthors;
     }
 
     @Override
@@ -127,7 +137,7 @@ public class BookServiceImpl implements BookService {
             bookDao.updateBookTitle(bookToUpdate.getId(),targetInfo.getTitle());
             isUpdated = true;
         }
-        boolean isAuthorUpdated =isAuthorUpdated(bookToUpdate, targetInfo);
+        boolean isAuthorUpdated = isAuthorUpdated(bookToUpdate, targetInfo);
         isUpdated = isUpdated||isAuthorUpdated;
         boolean isGenreUpdated =isGenreUpdated(bookToUpdate,targetInfo);
         isUpdated = isUpdated||isGenreUpdated;
@@ -140,6 +150,13 @@ public class BookServiceImpl implements BookService {
     }
 
     private boolean isAuthorUpdated(Book bookToUpdate, BookDTO targetInfo) {
+        //-------- new algorithm
+        List<AuthorDTO> targetInfoAuthorDTO = targetInfo.getAuthorDTOS();
+        // get list of targetAuthors from database(insert if needed)
+        List<Author> targetInfoAuthors = getAndInsertAuthors(targetInfoAuthorDTO);
+
+
+        //------------------------------------
         boolean isUpdated = false;
         List<String> targetInfoAuthorsNames = targetInfo.getAuthorDTOS().stream()
                 .map(AuthorDTO::getFullName).collect(Collectors.toList());
