@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("Dao for work with books")
-@Import({BookDaoJdbc.class, GenreDaoJdbc.class})
+@Import({BookDaoJdbc.class, GenreDaoJdbc.class,AuthorDaoJdbc.class})
 @JdbcTest
 class BookDaoJdbcTest {
 
