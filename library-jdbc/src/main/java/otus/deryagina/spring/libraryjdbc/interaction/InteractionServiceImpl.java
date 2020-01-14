@@ -53,7 +53,7 @@ public class InteractionServiceImpl implements InteractionService {
             //which book do you want yo update
             ioStreamsProvider.printInfo(localizationService.getLocalizedMessage("which.to.update"));
             String bookIdToUpdateString = ioStreamsProvider.readData();
-            Long bookIdToUpdate = Long.parseLong(bookIdToUpdateString);
+            long bookIdToUpdate = Long.parseLong(bookIdToUpdateString);
             boolean isValidId=false;
             for (BookDTO currentBook:booksWithSameTitle) {
                 if(currentBook.getId()== bookIdToUpdate){
@@ -73,7 +73,7 @@ public class InteractionServiceImpl implements InteractionService {
     }
 
     @Override
-    public void updateBookById(Long id) {
+    public void updateBookById(long id) {
         if(bookService.findBookById(id)==null){
             ioStreamsProvider.printInfo(localizationService.getLocalizedMessage("invalid.input.id", id));
             return;
@@ -87,7 +87,7 @@ public class InteractionServiceImpl implements InteractionService {
     }
 
     @Override
-    public void deleteBookById(Long id) {
+    public void deleteBookById(long id) {
         if(bookService.findBookById(id)==null){
             ioStreamsProvider.printInfo(localizationService.getLocalizedMessage("invalid.input.id", id));
             return;
