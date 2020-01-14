@@ -1,6 +1,10 @@
 package otus.deryagina.spring.libraryjpa.domain;
 
 import lombok.*;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
 import java.util.List;
@@ -10,6 +14,8 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @Table(name = "books")
+@NamedEntityGraph(name = "book-author-entity-graph",
+        attributeNodes = {@NamedAttributeNode("authors")})
 public class Book {
 
     @Id
@@ -18,10 +24,15 @@ public class Book {
     @Column(name = "title")
     private String title;
 
-    @ManyToMany
-    @JoinTable(name = "books_authors", joinColumns = @JoinColumn(name = "book_id"),
+    @ManyToMany(cascade = {CascadeType.PERSIST,CascadeType.MERGE})
+    @JoinTable(name = "books_authors_correlation", joinColumns = @JoinColumn(name = "book_id"),
     inverseJoinColumns = @JoinColumn(name = "author_id"))
     private List<Author> authors;
 
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @Fetch(FetchMode.SUBSELECT)
+    @ManyToMany(cascade = {CascadeType.PERSIST,CascadeType.MERGE})
+    @JoinTable(name = "books_genres_correlation", joinColumns = @JoinColumn(name = "book_id"),
+            inverseJoinColumns = @JoinColumn(name = "genre_id"))
     private List<Genre> genres;
 }

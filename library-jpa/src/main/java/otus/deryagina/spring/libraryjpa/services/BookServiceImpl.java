@@ -16,6 +16,7 @@ import otus.deryagina.spring.libraryjpa.mapper.ModelMapper;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -36,7 +37,7 @@ public class BookServiceImpl implements BookService {
         book.setTitle(bookDTO.getTitle());
         book.setAuthors(authors);
         book.setGenres(genres);
-        return bookDao.insert(book);
+        return bookDao.save(book).getId();
     }
 
     private List<Genre> prepareGenresForNewBook(BookDTO bookDTO) {
@@ -55,9 +56,10 @@ public class BookServiceImpl implements BookService {
                     .map(modelMapper::dtoToEntity).collect(Collectors.toList());
             for (Genre genre :
                     genresToSave) {
-                long idFromDb = genreDao.insert(genre);
-                genre.setId(idFromDb);
-                genresForNewBook.add(genre);
+                //TODO:
+//                long idFromDb = genreDao.save(genre);
+//                genre.setId(idFromDb);
+//                genresForNewBook.add(genre);
             }
         }
         return genresForNewBook;
@@ -79,7 +81,7 @@ public class BookServiceImpl implements BookService {
                     .map(modelMapper::dtoToEntity).collect(Collectors.toList());
             for (Author author :
                     authorsToSave) {
-//                long idFromDb = authorDao.insert(author);
+//                long idFromDb = authorDao.save(author);
 //                author.setId(idFromDb);
 //                authorsForNewBook.add(author);
             }
@@ -100,11 +102,8 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public BookDTO findBookById(long id) {
-        Book book = bookDao.findById(id);
-        if (book == null) {
-            return null;
-        }
-        return modelMapper.entityToDto(book);
+        Optional<Book> book = bookDao.findById(id);
+        return book.map(modelMapper::entityToDto).orElse(null);
     }
 
     @Override
@@ -119,19 +118,11 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public boolean updateBook(long id, BookDTO targetInfo) {
-        //bookToUpdate id is id from db
-        Book bookToUpdate = bookDao.findById(id);
-        //compare bookToUpdate with targetInfo to understand what to update
-        boolean isUpdated=false;
-        if(!bookToUpdate.getTitle().equalsIgnoreCase(targetInfo.getTitle())){
-            bookDao.updateBookTitle(bookToUpdate.getId(),targetInfo.getTitle());
-            isUpdated = true;
-        }
-        boolean isAuthorUpdated =isAuthorUpdated(bookToUpdate, targetInfo);
-        isUpdated = isUpdated||isAuthorUpdated;
-        boolean isGenreUpdated =isGenreUpdated(bookToUpdate,targetInfo);
-        isUpdated = isUpdated||isGenreUpdated;
-        return isUpdated;
+        boolean isUpdated=true;
+        Book bookToSave = modelMapper.dtoToEntity(targetInfo);
+        bookToSave.setId(id);
+        bookDao.save(bookToSave);
+        return true;
     }
 
     @Override
@@ -161,7 +152,7 @@ public class BookServiceImpl implements BookService {
               for (String currentName : authorNamesNotInDb){
                   Author author= new Author();
                   author.setFullName(currentName);
-//                  long newAuthorId = authorDao.insert(author);
+//                  long newAuthorId = authorDao.save(author);
 //                  bookDao.addAuthorForBook(bookToUpdate.getId(),newAuthorId);
 //                  isUpdated=true;
               }
@@ -201,9 +192,10 @@ public class BookServiceImpl implements BookService {
                 for (String currentName : genreNamesNotInDb){
                     Genre genre= new Genre();
                     genre.setName(currentName);
-                    long newGenreId = genreDao.insert(genre);
-                    bookDao.addGenreForBook(bookToUpdate.getId(),newGenreId);
-                    isUpdated=true;
+                    //TODO:
+//                    long newGenreId = genreDao.save(genre);
+//                    bookDao.addGenreForBook(bookToUpdate.getId(),newGenreId);
+//                    isUpdated=true;
                 }
             }
         }

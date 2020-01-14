@@ -13,6 +13,7 @@ import otus.deryagina.spring.libraryjpa.dao.BookDao;
 import otus.deryagina.spring.libraryjpa.dto.AuthorDTO;
 import otus.deryagina.spring.libraryjpa.dto.BookDTO;
 import otus.deryagina.spring.libraryjpa.dto.GenreDTO;
+import otus.deryagina.spring.libraryjpa.mapper.ModelMapperImpl;
 
 
 import java.util.ArrayList;

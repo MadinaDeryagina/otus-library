@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DisplayName("Dao for work with authors")
+@DisplayName("AuthorDao")
 @Import(AuthorDaoJpaImpl.class)
 @JdbcTest
 class AuthorDaoJpaTest {

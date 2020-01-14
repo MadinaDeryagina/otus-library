@@ -1,6 +1,12 @@
 package otus.deryagina.spring.libraryjpa.shell;
 
 import lombok.AllArgsConstructor;
+import org.springframework.shell.standard.ShellComponent;
+import org.springframework.shell.standard.ShellMethod;
+import otus.deryagina.spring.libraryjpa.interaction.InteractionService;
+import otus.deryagina.spring.libraryjpa.services.AuthorService;
+import otus.deryagina.spring.libraryjpa.services.BookService;
+import otus.deryagina.spring.libraryjpa.services.GenreService;
 
 
 @ShellComponent

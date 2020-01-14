@@ -1,0 +1,47 @@
+--save into GENRES(id,name) values (1,'Poetry');
+-- save into GENRES(id, name)
+-- values (2, 'Drama');
+-- save into GENRES(id, name)
+-- values (3, 'Prose');
+-- save into GENRES(id, name)
+-- values (4, 'Nonfiction');
+-- save into GENRES(id, name)
+-- values (5, 'Media');
+--
+-- save into BOOKS(id, title)
+-- values (1, 'My book');
+-- save into AUTHORS(id, name)
+-- values (1, 'First author');
+-- save into AUTHORS(id, name)
+-- VALUES (2, 'Second author');
+-- save into AUTHORS(id, name)
+-- VALUES (3, 'Third author');
+-- save into BOOKS_AUTHORS_CORRELATION
+-- values (1, 1);
+-- save into BOOKS_AUTHORS_CORRELATION
+-- values (1, 2);
+-- save into BOOKS_GENRES_CORRELATION
+-- values (1, 2);
+-- save into BOOKS_GENRES_CORRELATION
+-- values (1, 3);
+--
+-- save into BOOKS(id, title)
+-- values (2, 'Second book');
+-- save into BOOKS_AUTHORS_CORRELATION
+-- values (2, 1);
+-- save into BOOKS_GENRES_CORRELATION
+-- values (2, 1);
+--
+-- save into BOOKS(id, TITLE)
+-- values (3, 'Same title dif authors');
+-- save into BOOKS_AUTHORS_CORRELATION
+-- values (3, 1);
+-- save into BOOKS_GENRES_CORRELATION
+-- values (3, 4);
+--
+-- save into BOOKS(id, TITLE)
+-- values (4, 'Same title dif authors');
+-- save into BOOKS_AUTHORS_CORRELATION
+-- values (4, 2);
+-- save into BOOKS_GENRES_CORRELATION
+-- values (4, 3);

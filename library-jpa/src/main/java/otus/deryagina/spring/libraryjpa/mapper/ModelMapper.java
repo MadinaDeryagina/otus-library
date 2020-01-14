@@ -22,11 +22,17 @@ public interface ModelMapper {
             @Mapping(source = "genres", target = "genreDTOS")
     })
     BookDTO entityToDto(Book book);
-    List<BookDTO>  entityToDto(List<Book> books);
+
+    List<BookDTO> entityToDto(List<Book> books);
+
     List<GenreDTO> genreEntityListToGenreDtoList(List<Genre> genres);
+
     List<AuthorDTO> authorEntityListToAuthorDtoList(List<Author> authors);
+
     AuthorDTO entityToDto(Author author);
+
     GenreDTO entityToDto(Genre genre);
+
     @Named("mapWithoutId")
     @Mapping(target = "id", ignore = true)
     Author dtoToEntity(AuthorDTO authorDTO);
@@ -34,4 +40,12 @@ public interface ModelMapper {
     @Named("mapWithoutId")
     @Mapping(target = "id", ignore = true)
     Genre dtoToEntity(GenreDTO genreDTO);
+
+    @Named("mapWithoutId")
+    @Mappings({
+            @Mapping(target = "id", ignore = true),
+            @Mapping(source = "authorDTOS", target = "authors"),
+            @Mapping(source = "genreDTOS", target = "genres")
+    })
+    Book dtoToEntity(BookDTO bookDTO);
 }

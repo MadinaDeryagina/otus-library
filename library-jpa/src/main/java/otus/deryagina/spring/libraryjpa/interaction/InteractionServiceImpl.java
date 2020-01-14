@@ -49,24 +49,24 @@ public class InteractionServiceImpl implements InteractionService {
         String yesOrNo = ioStreamsProvider.readData();
         if (yesOrNo.equalsIgnoreCase(localizationService.getLocalizedMessage("yes", null))) {
             bookService.addAsNewBook(bookDTO);
-        } else if (yesOrNo.equalsIgnoreCase(localizationService.getLocalizedMessage("no", null))){
+        } else if (yesOrNo.equalsIgnoreCase(localizationService.getLocalizedMessage("no", null))) {
             //which book do you want yo update
-            ioStreamsProvider.printInfo(localizationService.getLocalizedMessage("which.to.update",null));
+            ioStreamsProvider.printInfo(localizationService.getLocalizedMessage("which.to.update", null));
             String bookIdToUpdateString = ioStreamsProvider.readData();
             long bookIdToUpdate = Long.parseLong(bookIdToUpdateString);
-            boolean isValidId=false;
-            for (BookDTO currentBook:booksWithSameTitle) {
-                if(currentBook.getId()== bookIdToUpdate){
-                    isValidId=true;
+            boolean isValidId = false;
+            for (BookDTO currentBook : booksWithSameTitle) {
+                if (currentBook.getId() == bookIdToUpdate) {
+                    isValidId = true;
                 }
             }
-            if(!isValidId){
-                ioStreamsProvider.printInfo(localizationService.getLocalizedMessage("invalid.input.id",new String[]{String.valueOf(bookIdToUpdate)}));
+            if (!isValidId) {
+                ioStreamsProvider.printInfo(localizationService.getLocalizedMessage("invalid.input.id", new String[]{String.valueOf(bookIdToUpdate)}));
                 return;
             }
-            if(bookService.updateBook(bookIdToUpdate, bookDTO)){
-                ioStreamsProvider.printInfo(localizationService.getLocalizedMessage("update.success",null));
-            }else {
+            if (bookService.updateBook(bookIdToUpdate, bookDTO)) {
+                ioStreamsProvider.printInfo(localizationService.getLocalizedMessage("update.success", null));
+            } else {
                 ioStreamsProvider.printInfo(localizationService.getLocalizedMessage("update.fail", null));
             }
         }
@@ -74,22 +74,22 @@ public class InteractionServiceImpl implements InteractionService {
 
     @Override
     public void updateBookById(long id) {
-        if(bookService.findBookById(id)==null){
-            ioStreamsProvider.printInfo(localizationService.getLocalizedMessage("invalid.input.id",new String[]{String.valueOf(id)}));
+        if (bookService.findBookById(id) == null) {
+            ioStreamsProvider.printInfo(localizationService.getLocalizedMessage("invalid.input.id", new String[]{String.valueOf(id)}));
             return;
         }
         BookDTO bookDTO = createBookDTOByInputData();
         if (bookDTO == null) {
             return;
         }
-        bookService.updateBook(id,bookDTO);
+        bookService.updateBook(id, bookDTO);
 
     }
 
     @Override
     public void deleteBookById(long id) {
-        if(bookService.findBookById(id)==null){
-            ioStreamsProvider.printInfo(localizationService.getLocalizedMessage("invalid.input.id",new String[]{String.valueOf(id)}));
+        if (bookService.findBookById(id) == null) {
+            ioStreamsProvider.printInfo(localizationService.getLocalizedMessage("invalid.input.id", new String[]{String.valueOf(id)}));
             return;
         }
         bookService.deleteBookById(id);

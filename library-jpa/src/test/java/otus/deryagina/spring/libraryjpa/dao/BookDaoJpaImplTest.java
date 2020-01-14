@@ -3,9 +3,9 @@ package otus.deryagina.spring.libraryjpa.dao;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import otus.deryagina.spring.libraryjpa.domain.Author;
 import otus.deryagina.spring.libraryjpa.domain.Book;
 import otus.deryagina.spring.libraryjpa.domain.Genre;
@@ -17,9 +17,9 @@ import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DisplayName("Dao for work with books")
+@DisplayName("BookDao ")
 @Import({BookDaoJpaImpl.class,GenreDaoJpaImpl.class})
-@JdbcTest
+@DataJpaTest
 class BookDaoJpaImplTest {
 
     private static final int EXPECTED_BOOK_COUNT = 4;
@@ -41,6 +41,8 @@ class BookDaoJpaImplTest {
     @Autowired
     private BookDaoJpaImpl bookDaoJpa;
 
+    @Autowired
+    private TestEntityManager entityManager;
 
     @DisplayName("should return correct book count in database ")
     @Test
@@ -51,20 +53,23 @@ class BookDaoJpaImplTest {
     @DisplayName("should  return correct book with correct given id")
     @Test
     void shouldReturnCorrectBookById(){
-        assertThat(bookDaoJpa.findById(GIVEN_ID)).hasFieldOrPropertyWithValue("title",EXPECTED_BOOK_TITLE);
+        assertThat(bookDaoJpa.findById(GIVEN_ID).get()).hasFieldOrPropertyWithValue("title",EXPECTED_BOOK_TITLE);
     }
 
-    @DisplayName("should return null with incorrect id")
+
+    @DisplayName("should return empty optional with incorrect id")
     @Test
     void shouldReturnNullWithIncorrectId(){
-        assertThat(bookDaoJpa.findById(INCORRECT_GIVEN_ID)).isEqualTo(null);
+        assertThat(bookDaoJpa.findById(INCORRECT_GIVEN_ID)).isNotPresent();
     }
+
 
     @DisplayName("should return expected number of books with given title")
     @Test
     void shouldExpectedNumberOfBooksWithGivenTitle(){
         assertThat(bookDaoJpa.findBooksByTitle(GIVEN_TITLE).size()).isEqualTo(EXPECTED_NUMBER_OF_BOOKS_WITH_GIVEN_TITLE);
     }
+
 
     @DisplayName("should return all books with given title")
     @Test
@@ -88,8 +93,8 @@ class BookDaoJpaImplTest {
         book.setGenres(Collections.singletonList(genre));
         Author author = new Author(EXISTING_AUTHOR_ID, EXISTING_AUTHOR_NAME);
         book.setAuthors(Collections.singletonList(author));
-        long newId = bookDaoJpa.insert(book);
-        Book actual = bookDaoJpa.findById(newId);
+        long newId = bookDaoJpa.save(book).getId();
+        Book actual = entityManager.find(Book.class, newId);
         assertThat(actual.getTitle()).isEqualTo(book.getTitle());
         assertThat(actual.getAuthors().get(0)).isEqualToComparingFieldByField(author);
         assertThat(actual.getGenres().get(0)).isEqualToComparingFieldByField(genre);
@@ -98,16 +103,20 @@ class BookDaoJpaImplTest {
     @DisplayName("should update title by id")
     @Test
     void shouldUpdateTitleById(){
-        bookDaoJpa.updateBookTitle(GIVEN_ID,NEW_GIVEN_TITLE);
-        Book actual = bookDaoJpa.findById(GIVEN_ID);
+        Book bookToUpdate = entityManager.find(Book.class,GIVEN_ID);
+        System.out.println(bookToUpdate);
+        bookToUpdate.setTitle(NEW_GIVEN_TITLE);
+        bookDaoJpa.save(bookToUpdate);
+        Book actual = bookDaoJpa.findById(GIVEN_ID).get();
         assertThat(actual.getTitle()).isEqualTo(NEW_GIVEN_TITLE);
+        System.out.println(actual);
     }
 
     @DisplayName("should add author to Book by authorId")
     @Test
     void  shouldAddAuthorToBookByAuthorId(){
         bookDaoJpa.addAuthorForBook(GIVEN_BOOK_ID,GIVEN_AUTHOR_ID_TO_ADD);
-        Book actual = bookDaoJpa.findById(GIVEN_BOOK_ID);
+        Book actual = bookDaoJpa.findById(GIVEN_BOOK_ID).get();
         System.out.println(actual);
         assertThat(actual.getAuthors().stream().map(Author::getId)).contains(GIVEN_AUTHOR_ID_TO_ADD);
 

@@ -8,17 +8,17 @@ import javax.persistence.*;
 
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
-@Entity
-@Table(name = "comments")
+//@NoArgsConstructor
+//@Entity
+//@Table(name = "comments")
 public class Comment {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
-
-    private Book book;
-
-    @Column(name = "text")
-    private String text;
+//
+//    @Id
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    private long id;
+//
+//    private Book book;
+//
+//    @Column(name = "text")
+//    private String text;
 }

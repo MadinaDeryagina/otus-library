@@ -4,21 +4,22 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
 import otus.deryagina.spring.libraryjpa.domain.Genre;
 
-
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DisplayName("Dao for work with genres")
+@DisplayName("GenreDao")
 @Import(GenreDaoJpaImpl.class)
-@JdbcTest
-class GenreDaoJdbcTest {
+@DataJpaTest
+class GenreDaoJpaTest {
 
     private static final int EXPECTED_NUMBER_OF_GENRES = 5;
     private static final String INVALID_NAME = "BLA_BLA";
@@ -27,7 +28,10 @@ class GenreDaoJdbcTest {
     private static final String GIVEN_GENRE_NAME = "Drama";
 
     @Autowired
-    private GenreDaoJpaImpl genreDaoJdbc;
+    private GenreDaoJpaImpl genreDaoJpa;
+
+    @Autowired
+    private TestEntityManager testEntityManager;
 
 
     @BeforeAll
@@ -37,17 +41,17 @@ class GenreDaoJdbcTest {
         namesOfGenres.add("Drama");
     }
 
-
     @Test
     @DisplayName("should return expected number of genres")
     void shouldReturnExpectedNumberOfGenres() {
-        assertThat(genreDaoJdbc.findAll().size()).isEqualTo(EXPECTED_NUMBER_OF_GENRES);
+        assertThat(genreDaoJpa.findAll().size()).isEqualTo(EXPECTED_NUMBER_OF_GENRES);
     }
+
 
     @Test
     @DisplayName("should find correct genres by names")
     void findGenresByNames() {
-        List<Genre> genresByNames = genreDaoJdbc.findGenresByNames(namesOfGenres);
+        List<Genre> genresByNames = genreDaoJpa.findGenresByNames(namesOfGenres);
         List<String> namesFromDB = genresByNames.stream()
                 .map(Genre::getName).collect(Collectors.toList());
         assertThat(namesFromDB).containsSequence(namesOfGenres);
@@ -56,8 +60,9 @@ class GenreDaoJdbcTest {
     @Test
     @DisplayName(("should return correct genre by correct name"))
     void findGenreByCorrectName() {
-        Genre genre = genreDaoJdbc.findGenreByName(GIVEN_GENRE_NAME);
-        assertThat(genre.getName()).isEqualTo(GIVEN_GENRE_NAME);
+        Optional<Genre> genre = genreDaoJpa.findGenreByName(GIVEN_GENRE_NAME);
+        assertThat(genre).isPresent();
+        assertThat(genre.get().getName()).isEqualTo(GIVEN_GENRE_NAME);
     }
 
     @Test
@@ -65,24 +70,23 @@ class GenreDaoJdbcTest {
     void shouldReturnEmptyListForNamesWhichAreNotInDB() {
         List<String> namesWhichAreNotInDB = new ArrayList<>();
         namesWhichAreNotInDB.add("Invalid genre");
-        assertThat(genreDaoJdbc.findGenresByNames(namesWhichAreNotInDB)).isEmpty();
+        assertThat(genreDaoJpa.findGenresByNames(namesWhichAreNotInDB)).isEmpty();
 
     }
 
     @Test
-    @DisplayName("should return null by invalid name")
+    @DisplayName("should return empty optional by invalid name")
     void findGenreByInvalidName() {
-        assertThat(genreDaoJdbc.findGenreByName(INVALID_NAME)).isNull();
+        assertThat(genreDaoJpa.findGenreByName(INVALID_NAME)).isNotPresent();
     }
 
     @DisplayName("should add genre to DB")
     @Test
     void shouldInsertGenre() {
-        Genre genre = new Genre();
-        genre.setName(NEW_GENRE_NAME);
-        long newId = genreDaoJdbc.insert(genre);
-        genre.setId(newId);
-        Genre actual = genreDaoJdbc.findById(newId);
-        assertThat(actual).isEqualToComparingFieldByField(genre);
+        Genre genre = new Genre(NEW_GENRE_NAME);
+        Genre savedGenre = genreDaoJpa.save(genre);
+        Genre actual = testEntityManager.find(Genre.class,savedGenre.getId());
+        assertThat(actual).isNotNull();
+        assertThat(actual).isEqualToComparingFieldByField(savedGenre);
     }
 }
