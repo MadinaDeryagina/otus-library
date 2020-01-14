@@ -32,20 +32,20 @@ public class InteractionServiceImpl implements InteractionService {
         }
         List<BookDTO> booksWithSameTitle = bookService.findBooksByTitle(bookDTO.getTitle());
         if (booksWithSameTitle.isEmpty()) {
-            long newBookId = bookService.addAsNewBook(bookDTO);
-            ioStreamsProvider.printInfo(localizationService.getLocalizedMessage("add.book.success", String.valueOf(newBookId)));
+            Long newBookId = bookService.addAsNewBook(bookDTO);
+            ioStreamsProvider.printInfo(localizationService.getLocalizedMessage("add.book.success", newBookId));
             return;
         }
         List<BookDTO> exactlySameBook = booksWithSameTitle.stream().filter(x -> x.equals(bookDTO)).collect(Collectors.toList());
         if (!exactlySameBook.isEmpty()) {
-            ioStreamsProvider.printInfo(localizationService.getLocalizedMessage("same.book.in.lib", exactlySameBook.toString()));
+            ioStreamsProvider.printInfo(localizationService.getLocalizedMessage("same.book.in.lib", exactlySameBook));
             return;
         }
         chooseToUpdateOrAddAsNew(bookDTO, booksWithSameTitle);
     }
 
     private void chooseToUpdateOrAddAsNew(BookDTO bookDTO, List<BookDTO> booksWithSameTitle) {
-        ioStreamsProvider.printInfo(localizationService.getLocalizedMessage("found.books.with.same.title", booksWithSameTitle.toString()));
+        ioStreamsProvider.printInfo(localizationService.getLocalizedMessage("found.books.with.same.title", booksWithSameTitle));
         String yesOrNo = ioStreamsProvider.readData();
         if (yesOrNo.equalsIgnoreCase(localizationService.getLocalizedMessage("yes"))) {
             bookService.addAsNewBook(bookDTO);
@@ -53,7 +53,7 @@ public class InteractionServiceImpl implements InteractionService {
             //which book do you want yo update
             ioStreamsProvider.printInfo(localizationService.getLocalizedMessage("which.to.update"));
             String bookIdToUpdateString = ioStreamsProvider.readData();
-            long bookIdToUpdate = Long.parseLong(bookIdToUpdateString);
+            Long bookIdToUpdate = Long.parseLong(bookIdToUpdateString);
             boolean isValidId=false;
             for (BookDTO currentBook:booksWithSameTitle) {
                 if(currentBook.getId()== bookIdToUpdate){
@@ -61,7 +61,7 @@ public class InteractionServiceImpl implements InteractionService {
                 }
             }
             if(!isValidId){
-                ioStreamsProvider.printInfo(localizationService.getLocalizedMessage("invalid.input.id", String.valueOf(bookIdToUpdate)));
+                ioStreamsProvider.printInfo(localizationService.getLocalizedMessage("invalid.input.id", bookIdToUpdate));
                 return;
             }
             if(bookService.updateBook(bookIdToUpdate, bookDTO)){
@@ -73,9 +73,9 @@ public class InteractionServiceImpl implements InteractionService {
     }
 
     @Override
-    public void updateBookById(long id) {
+    public void updateBookById(Long id) {
         if(bookService.findBookById(id)==null){
-            ioStreamsProvider.printInfo(localizationService.getLocalizedMessage("invalid.input.id", String.valueOf(id)));
+            ioStreamsProvider.printInfo(localizationService.getLocalizedMessage("invalid.input.id", id));
             return;
         }
         BookDTO bookDTO = createBookDTOByInputData();
@@ -87,9 +87,9 @@ public class InteractionServiceImpl implements InteractionService {
     }
 
     @Override
-    public void deleteBookById(long id) {
+    public void deleteBookById(Long id) {
         if(bookService.findBookById(id)==null){
-            ioStreamsProvider.printInfo(localizationService.getLocalizedMessage("invalid.input.id", String.valueOf(id)));
+            ioStreamsProvider.printInfo(localizationService.getLocalizedMessage("invalid.input.id", id));
             return;
         }
         bookService.deleteBookById(id);
@@ -106,16 +106,14 @@ public class InteractionServiceImpl implements InteractionService {
             ioStreamsProvider.printInfo(localizationService.getLocalizedMessage("param.not.null", localizationService.getLocalizedMessage("book.title")));
             return null;
         }
-        String[] keys= new String[]{"insert.book.param","book.authors"};
-        ioStreamsProvider.printInfo(localizationService.getLocalizedMessage(keys) + localizationService.getLocalizedMessage("use.comma"));
+        ioStreamsProvider.printInfo(localizationService.getLocalizedMessageByMultipleKeys("insert.book.param","book.authors") + localizationService.getLocalizedMessage("use.comma"));
         if (askAndAddAuthors(bookDTO)) return null;
         if (askAndAddGenres(bookDTO)) return null;
         return bookDTO;
     }
 
     private boolean askAndAddGenres(BookDTO bookDTO) {
-        String[] keys= new String[]{"insert.book.param","book.genres"};
-        ioStreamsProvider.printInfo(localizationService.getLocalizedMessage(keys)
+        ioStreamsProvider.printInfo(localizationService.getLocalizedMessageByMultipleKeys("insert.book.param","book.genres")
                 + localizationService.getLocalizedMessage("use.comma"));
         String genres = ioStreamsProvider.readData();
         if (isInputValid(genres)) {
@@ -123,8 +121,7 @@ public class InteractionServiceImpl implements InteractionService {
             List<GenreDTO> genreDTOS = Arrays.stream(genresNames).map(GenreDTO::new).collect(Collectors.toList());
             bookDTO.setGenreDTOS(genreDTOS);
         } else {
-            String[] keys2= new String[]{"param.not.null","book.genres"};
-            ioStreamsProvider.printInfo(localizationService.getLocalizedMessage(keys2));
+            ioStreamsProvider.printInfo(localizationService.getLocalizedMessageByMultipleKeys("param.not.null","book.genres"));
             return true;
         }
         return false;
@@ -137,8 +134,7 @@ public class InteractionServiceImpl implements InteractionService {
             List<AuthorDTO> authorDTOS = Arrays.stream(authorsNames).map(AuthorDTO::new).collect(Collectors.toList());
             bookDTO.setAuthorDTOS(authorDTOS);
         } else {
-            String[] keys2= new String[]{"param.not.null","book.authors"};
-            ioStreamsProvider.printInfo(localizationService.getLocalizedMessage(keys2));
+            ioStreamsProvider.printInfo(localizationService.getLocalizedMessageByMultipleKeys("param.not.null","book.authors"));
             return true;
         }
         return false;

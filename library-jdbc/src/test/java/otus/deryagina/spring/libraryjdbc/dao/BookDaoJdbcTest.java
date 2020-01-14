@@ -7,6 +7,8 @@ import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import otus.deryagina.spring.libraryjdbc.domain.*;
+import otus.deryagina.spring.libraryjdbc.relation.BookAuthorRelation;
+import otus.deryagina.spring.libraryjdbc.relation.BookGenreRelation;
 
 import java.util.*;
 import java.util.stream.Collectors;

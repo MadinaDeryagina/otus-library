@@ -10,6 +10,8 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import otus.deryagina.spring.libraryjdbc.domain.*;
+import otus.deryagina.spring.libraryjdbc.relation.BookAuthorRelation;
+import otus.deryagina.spring.libraryjdbc.relation.BookGenreRelation;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

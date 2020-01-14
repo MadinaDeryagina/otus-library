@@ -1,4 +1,4 @@
-package otus.deryagina.spring.libraryjdbc.domain;
+package otus.deryagina.spring.libraryjdbc.relation;
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;

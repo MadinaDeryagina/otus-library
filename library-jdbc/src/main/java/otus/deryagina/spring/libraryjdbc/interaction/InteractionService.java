@@ -5,7 +5,7 @@ package otus.deryagina.spring.libraryjdbc.interaction;
 public interface InteractionService {
     void askToAddBook();
 
-    void updateBookById(long id);
+    void updateBookById(Long id);
 
-    void deleteBookById(long id);
+    void deleteBookById(Long id);
 }
