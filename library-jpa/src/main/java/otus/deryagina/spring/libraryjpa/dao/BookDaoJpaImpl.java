@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import otus.deryagina.spring.libraryjpa.domain.Book;
-import otus.deryagina.spring.libraryjpa.domain.Genre;
 
 import javax.persistence.*;
 import java.util.List;
@@ -63,28 +62,13 @@ public class BookDaoJpaImpl implements BookDao {
         return book;
     }
 
-    @Override
-    public void addAuthorForBook(long bookId, long authorId) {
-
-    }
-
-    @Override
-    public void deleteAuthorFromBook(long bookId, long authorId) {
-
-    }
-
-    @Override
-    public void addGenreForBook(long bookId, long genreId) {
-
-    }
-
-    @Override
-    public void deleteGenreFromBook(long bookId, long genreId) {
-
-    }
 
     @Override
     public void deleteBookById(long id) {
-
+        Query query = entityManager.createQuery("delete " +
+                "from Book b " +
+                "where b.id = :id");
+        query.setParameter("id", id);
+        query.executeUpdate();
     }
 }

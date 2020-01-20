@@ -43,6 +43,7 @@ public class LibraryJpaApplicationCommands {
     public void addBook() {
         interactionService.askToAddBook();
     }
+
     @ShellMethod(value = "update book by id", key = {"updatebook", "ub"})
     public void updateBookById(long id) {
         interactionService.updateBookById(id);

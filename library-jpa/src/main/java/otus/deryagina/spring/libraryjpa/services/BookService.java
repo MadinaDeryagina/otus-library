@@ -1,12 +1,13 @@
 package otus.deryagina.spring.libraryjpa.services;
 
 
+import otus.deryagina.spring.libraryjpa.domain.Book;
 import otus.deryagina.spring.libraryjpa.dto.BookDTO;
 
 import java.util.List;
 
 public interface BookService {
-    long addAsNewBook(BookDTO bookDTO);
+    Book addAsNewBook(BookDTO bookDTO);
 
     List<BookDTO> findAllBooks();
 
@@ -14,7 +15,7 @@ public interface BookService {
 
     List<BookDTO> findBooksByTitle(String title);
 
-    boolean updateBook(long id, BookDTO targetInfo);
+    void updateBook(long id, BookDTO targetInfo);
 
     void deleteBookById(long id);
 }

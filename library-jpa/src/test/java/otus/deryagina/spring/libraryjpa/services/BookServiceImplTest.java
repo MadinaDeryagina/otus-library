@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -24,9 +25,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("BookService")
 @ExtendWith(SpringExtension.class)
-@JdbcTest
+@DataJpaTest
 @Import({BookServiceImpl.class, ModelMapperImpl.class})
-@ComponentScan("otus.deryagina.spring.libraryjdbc.dao")
+@ComponentScan("otus.deryagina.spring.libraryjpa.dao")
 class BookServiceImplTest {
 
     private static final String GIVEN_TITLE = "My book" ;

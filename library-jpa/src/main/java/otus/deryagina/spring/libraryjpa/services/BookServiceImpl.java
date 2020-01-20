@@ -30,18 +30,22 @@ public class BookServiceImpl implements BookService {
 
 
     @Override
-    public long addAsNewBook(BookDTO bookDTO) {
-        List<Author> authors = prepareAuthorForNewBook(bookDTO);
-        List<Genre> genres = prepareGenresForNewBook(bookDTO);
+    public Book addAsNewBook(BookDTO bookDTO) {
+        List<Author> authors = getAndInsertAuthors(bookDTO.getAuthorDTOS());
+        List<Genre> genres = getAndInsertGenres(bookDTO.getGenreDTOS());
         Book book = new Book();
         book.setTitle(bookDTO.getTitle());
         book.setAuthors(authors);
         book.setGenres(genres);
-        return bookDao.save(book).getId();
+        return bookDao.save(book);
     }
 
-    private List<Genre> prepareGenresForNewBook(BookDTO bookDTO) {
-        List<GenreDTO> genreDTOS = bookDTO.getGenreDTOS();
+    /**
+     * @param genreDTOS list of genre DTO
+     * @return list of corresponding genres from database( if genre not in database insert it and return
+     * it with id in result list)
+     */
+    private List<Genre> getAndInsertGenres(List<GenreDTO> genreDTOS) {
         List<String> genresNames = genreDTOS.stream()
                 .map(GenreDTO::getName).collect(Collectors.toList());
         // check if there are genres,which are already in the library
@@ -49,30 +53,32 @@ public class BookServiceImpl implements BookService {
         List<String> genresNamesFromDb = genresFromDb.stream().
                 map(Genre::getName).collect(Collectors.toList());
         //get existing genres if they are, create new for those who are not
-        List<Genre> genresForNewBook = new ArrayList<>(genresFromDb);
+        List<Genre> resultGenres = new ArrayList<>(genresFromDb);
         // if there are genres who are not in db
         if (genresNames.size() > genresNamesFromDb.size()) {
             List<Genre> genresToSave = genreDTOS.stream().filter(x -> !genresNamesFromDb.contains(x.getName()))
                     .map(modelMapper::dtoToEntity).collect(Collectors.toList());
             for (Genre genre :
                     genresToSave) {
-                //TODO:
-//                long idFromDb = genreDao.save(genre);
-//                genre.setId(idFromDb);
-//                genresForNewBook.add(genre);
+                Genre genreFromDb = genreDao.save(genre);
+                resultGenres.add(genreFromDb);
             }
         }
-        return genresForNewBook;
+        return resultGenres;
     }
 
-    private List<Author> prepareAuthorForNewBook(BookDTO bookDTO) {
-        List<AuthorDTO> authorDTOS = bookDTO.getAuthorDTOS();
+    /**
+     * @param authorDTOS list of author DTO
+     * @return list of corresponding authors from database( if author not in database insert it and return
+     * it with id in result list)
+     */
+    private List<Author> getAndInsertAuthors(List<AuthorDTO> authorDTOS) {
         List<String> authorsNames = authorDTOS.stream()
                 .map(AuthorDTO::getFullName).collect(Collectors.toList());
         // check if there are authors,who are already in the library
         List<Author> authorsFromDb = authorDao.findAuthorsByNames(authorsNames);
         //get existing authors if they are, create new for those who are not
-        List<Author> authorsForNewBook = new ArrayList<>(authorsFromDb);
+        List<Author> resultAuthors = new ArrayList<>(authorsFromDb);
         // if there are authors who are not in db
         if (authorsNames.size() > authorsFromDb.size()) {
             List<String> authorsNamesFromDb = authorsFromDb.stream().
@@ -81,13 +87,13 @@ public class BookServiceImpl implements BookService {
                     .map(modelMapper::dtoToEntity).collect(Collectors.toList());
             for (Author author :
                     authorsToSave) {
-//                long idFromDb = authorDao.save(author);
-//                author.setId(idFromDb);
-//                authorsForNewBook.add(author);
+                Author authorFromDb = authorDao.save(author);
+                resultAuthors.add(authorFromDb);
             }
         }
-        return authorsForNewBook;
+        return resultAuthors;
     }
+
 
     @Override
     public List<BookDTO> findAllBooks() {
@@ -117,12 +123,10 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public boolean updateBook(long id, BookDTO targetInfo) {
-        boolean isUpdated=true;
+    public void updateBook(long id, BookDTO targetInfo) {
         Book bookToSave = modelMapper.dtoToEntity(targetInfo);
         bookToSave.setId(id);
         bookDao.save(bookToSave);
-        return true;
     }
 
     @Override
@@ -130,87 +134,5 @@ public class BookServiceImpl implements BookService {
         bookDao.deleteBookById(id);
     }
 
-    private boolean isAuthorUpdated(Book bookToUpdate, BookDTO targetInfo) {
-        boolean isUpdated = false;
-        List<String> targetInfoAuthorsNames = targetInfo.getAuthorDTOS().stream()
-                .map(AuthorDTO::getFullName).collect(Collectors.toList());
-        List<String> currentAuthorsNames = bookToUpdate.getAuthors().stream()
-                .map(Author::getFullName).collect(Collectors.toList());
-
-        List<String> authorsNamesToAddToBook = targetInfoAuthorsNames.stream()
-                .filter(x-> !currentAuthorsNames.contains(x)).collect(Collectors.toList());
-
-        HashSet<String> authorNamesNotInDb = new HashSet<>(authorsNamesToAddToBook);
-        if(!authorsNamesToAddToBook.isEmpty()){
-            List<Author> authorsFromDb = authorDao.findAuthorsByNames(authorsNamesToAddToBook);
-          for(Author currentAuthorFromDB : authorsFromDb){
-              bookDao.addAuthorForBook(bookToUpdate.getId(),currentAuthorFromDB.getId());
-              authorNamesNotInDb.remove(currentAuthorFromDB.getFullName());
-              isUpdated=true;
-          }
-          if(!authorNamesNotInDb.isEmpty()){
-              for (String currentName : authorNamesNotInDb){
-                  Author author= new Author();
-                  author.setFullName(currentName);
-//                  long newAuthorId = authorDao.save(author);
-//                  bookDao.addAuthorForBook(bookToUpdate.getId(),newAuthorId);
-//                  isUpdated=true;
-              }
-          }
-        }
-        List<String> authorNamesToDeleteFromBook = bookToUpdate.getAuthors()
-                .stream().map(Author::getFullName)
-                .filter(x -> !targetInfoAuthorsNames.contains(x))
-                .collect(Collectors.toList());
-        if(!authorNamesToDeleteFromBook.isEmpty()){
-            List<Author> authorToDeleteFromBook = authorDao.findAuthorsByNames(authorNamesToDeleteFromBook);
-            for(Author currentAuthor : authorToDeleteFromBook){
-                bookDao.deleteAuthorFromBook(bookToUpdate.getId(),currentAuthor.getId());
-                isUpdated=true;
-            }
-        }
-        return isUpdated;
-    }
-    private boolean isGenreUpdated(Book bookToUpdate, BookDTO targetInfo) {
-        boolean isUpdated = false;
-        List<String> targetInfoGenresNames = targetInfo.getGenreDTOS().stream()
-                .map(GenreDTO::getName).collect(Collectors.toList());
-        List<String> currentGenresNames = bookToUpdate.getGenres().stream()
-                .map(Genre::getName).collect(Collectors.toList());
-
-        List<String> genresNamesToAddToBook = targetInfoGenresNames.stream()
-                .filter(x-> !currentGenresNames.contains(x)).collect(Collectors.toList());
-        HashSet<String> genreNamesNotInDb = new HashSet<>(genresNamesToAddToBook);
-        if(!genresNamesToAddToBook.isEmpty()){
-            List<Genre> genresFromDb = genreDao.findGenresByNames(genresNamesToAddToBook);
-            for(Genre currentGenreFromDB : genresFromDb){
-                bookDao.addGenreForBook(bookToUpdate.getId(),currentGenreFromDB.getId());
-                genreNamesNotInDb.remove(currentGenreFromDB.getName());
-                isUpdated=true;
-            }
-            if(!genreNamesNotInDb.isEmpty()){
-                for (String currentName : genreNamesNotInDb){
-                    Genre genre= new Genre();
-                    genre.setName(currentName);
-                    //TODO:
-//                    long newGenreId = genreDao.save(genre);
-//                    bookDao.addGenreForBook(bookToUpdate.getId(),newGenreId);
-//                    isUpdated=true;
-                }
-            }
-        }
-        List<String> genreNamesToDeleteFromBook = bookToUpdate.getGenres()
-                .stream().map(Genre::getName)
-                .filter(x->!targetInfoGenresNames.contains(x))
-                .collect(Collectors.toList());
-        if(!genreNamesToDeleteFromBook.isEmpty()){
-            List<Genre> genreToDeleteFromBook = genreDao.findGenresByNames(genreNamesToDeleteFromBook);
-            for(Genre currentGenre : genreToDeleteFromBook){
-                bookDao.deleteGenreFromBook(bookToUpdate.getId(),currentGenre.getId());
-                isUpdated=true;
-            }
-        }
-        return isUpdated;
-    }
 
 }

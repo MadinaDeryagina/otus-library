@@ -15,13 +15,5 @@ public interface BookDao {
 
     Book save(Book book);
 
-    void addAuthorForBook(long bookId, long authorId);
-
-    void deleteAuthorFromBook(long bookId, long authorId);
-
-    void addGenreForBook(long bookId, long genreId);
-
-    void deleteGenreFromBook(long bookId, long genreId);
-
     void deleteBookById(long id);
 }

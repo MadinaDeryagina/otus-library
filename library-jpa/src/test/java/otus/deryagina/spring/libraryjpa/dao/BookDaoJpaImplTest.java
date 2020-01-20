@@ -112,25 +112,11 @@ class BookDaoJpaImplTest {
         System.out.println(actual);
     }
 
-    @DisplayName("should add author to Book by authorId")
-    @Test
-    void  shouldAddAuthorToBookByAuthorId(){
-        bookDaoJpa.addAuthorForBook(GIVEN_BOOK_ID,GIVEN_AUTHOR_ID_TO_ADD);
-        Book actual = bookDaoJpa.findById(GIVEN_BOOK_ID).get();
-        System.out.println(actual);
-        assertThat(actual.getAuthors().stream().map(Author::getId)).contains(GIVEN_AUTHOR_ID_TO_ADD);
 
-    }
     @DisplayName("should Correctly Delete book by existing  BookId")
     @Test
     void shouldCorrectlyDeleteBookByExistingBookId(){
         bookDaoJpa.deleteBookById(GIVEN_ID);
-        assertThat(bookDaoJpa.findById(GIVEN_ID)).isNull();
-        Map<String,Object> map = new HashMap<>(1);
-        map.put("bookId",GIVEN_ID);
-//        assertThat(namedParameterJdbcOperations.query("select bookId, genreId from BOOKS_GENRES_CORRELATION sc where bookId =:bookId order by BOOKID, GENREID",map,
-//        (rs, i) -> new BookGenreRelation(rs.getLong(1), rs.getLong(2)))).isEmpty();
-//        assertThat(namedParameterJdbcOperations.query("select bookId, AUTHORID from BOOKS_AUTHORS_CORRELATION sc where bookId =:bookId order by BOOKID, AUTHORID",map,
-//                (rs, i) -> new BookAuthorRelation(rs.getLong(1), rs.getLong(2)))).isEmpty();
+        assertThat(entityManager.find(Book.class, GIVEN_ID)).isNull();
     }
 }
