@@ -6,9 +6,11 @@ import org.mapstruct.Mappings;
 import org.mapstruct.Named;
 import otus.deryagina.spring.libraryjpa.domain.Author;
 import otus.deryagina.spring.libraryjpa.domain.Book;
+import otus.deryagina.spring.libraryjpa.domain.Comment;
 import otus.deryagina.spring.libraryjpa.domain.Genre;
 import otus.deryagina.spring.libraryjpa.dto.AuthorDTO;
 import otus.deryagina.spring.libraryjpa.dto.BookDTO;
+import otus.deryagina.spring.libraryjpa.dto.CommentDTO;
 import otus.deryagina.spring.libraryjpa.dto.GenreDTO;
 
 
@@ -48,4 +50,10 @@ public interface ModelMapper {
             @Mapping(source = "genreDTOS", target = "genres")
     })
     Book dtoToEntity(BookDTO bookDTO);
+
+    @Named("mapWithoutId")
+    @Mapping(target = "id", ignore = true)
+    Comment dtoToEntity(CommentDTO commentDTO);
+
+    List<CommentDTO> commentEntitiesToDTOS(List<Comment> comments);
 }

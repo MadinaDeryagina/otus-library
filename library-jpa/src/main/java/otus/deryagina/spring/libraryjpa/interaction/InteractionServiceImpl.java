@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import otus.deryagina.spring.libraryjpa.domain.Book;
 import otus.deryagina.spring.libraryjpa.dto.AuthorDTO;
 import otus.deryagina.spring.libraryjpa.dto.BookDTO;
+import otus.deryagina.spring.libraryjpa.dto.CommentDTO;
 import otus.deryagina.spring.libraryjpa.dto.GenreDTO;
 import otus.deryagina.spring.libraryjpa.iostreams.IOStreamsProvider;
 import otus.deryagina.spring.libraryjpa.localizer.LocalizationService;
@@ -87,31 +88,58 @@ public class InteractionServiceImpl implements InteractionService {
 
     @Override
     public void deleteBookById(long id) {
-        if(bookService.findBookById(id)==null){
+        if (bookService.findBookById(id) == null) {
             ioStreamsProvider.printInfo(localizationService.getLocalizedMessage("invalid.input.id", id));
             return;
         }
-        bookService.deleteBookById(id);    }
+        bookService.deleteBookById(id);
+    }
+
+    @Override
+    public void addCommentToBook(long bookId) {
+        ioStreamsProvider.printInfo(localizationService.getLocalizedMessage("write.comment"));
+        String comment = ioStreamsProvider.readData();
+        if (isInputValid(comment)) {
+            CommentDTO commentDTO = new CommentDTO(bookId,comment);
+            bookService.addCommentToBook(commentDTO);
+            ioStreamsProvider.printInfo(localizationService.getLocalizedMessage("add.comment.success", bookId));
+        } else {
+            ioStreamsProvider.printInfo(localizationService.getLocalizedMessageByMultipleKeys("param.not.null", "book.comment"));
+        }
+    }
+
+    @Override
+    public List<CommentDTO> showBookComments(long bookId) {
+        List<CommentDTO> commentDTOS=bookService.showAllCommentsToBook(bookId);
+        log.info(commentDTOS.toString());
+        return  commentDTOS;
+    }
+
+    @Override
+    public void deleteAllCommentsFromBook(long bookId) {
+        bookService.deleteAllCommentsFromBook(bookId);
+        ioStreamsProvider.printInfo(localizationService.getLocalizedMessage("comments.deleted.success"));
+    }
 
 
     private BookDTO createBookDTOByInputData() {
         BookDTO bookDTO = new BookDTO();
-        ioStreamsProvider.printInfo(localizationService.getLocalizedMessage("insert.book.param", localizationService.getLocalizedMessage("book.title")));
+        ioStreamsProvider.printInfo(localizationService.getLocalizedMessageByMultipleKeys("insert.book.param", "book.title"));
         String title = ioStreamsProvider.readData();
         if (isInputValid(title)) {
             bookDTO.setTitle(title);
         } else {
-            ioStreamsProvider.printInfo(localizationService.getLocalizedMessage("param.not.null", localizationService.getLocalizedMessage("book.title")));
+            ioStreamsProvider.printInfo(localizationService.getLocalizedMessageByMultipleKeys("param.not.null", "book.title"));
             return null;
         }
-        ioStreamsProvider.printInfo(localizationService.getLocalizedMessageByMultipleKeys("insert.book.param","book.authors") + localizationService.getLocalizedMessage("use.comma"));
+        ioStreamsProvider.printInfo(localizationService.getLocalizedMessageByMultipleKeys("insert.book.param", "book.authors") + localizationService.getLocalizedMessage("use.comma"));
         if (askAndAddAuthors(bookDTO)) return null;
         if (askAndAddGenres(bookDTO)) return null;
         return bookDTO;
     }
 
     private boolean askAndAddGenres(BookDTO bookDTO) {
-        ioStreamsProvider.printInfo(localizationService.getLocalizedMessageByMultipleKeys("insert.book.param","book.genres")
+        ioStreamsProvider.printInfo(localizationService.getLocalizedMessageByMultipleKeys("insert.book.param", "book.genres")
                 + localizationService.getLocalizedMessage("use.comma"));
         String genres = ioStreamsProvider.readData();
         if (isInputValid(genres)) {
@@ -119,7 +147,7 @@ public class InteractionServiceImpl implements InteractionService {
             List<GenreDTO> genreDTOS = Arrays.stream(genresNames).map(GenreDTO::new).collect(Collectors.toList());
             bookDTO.setGenreDTOS(genreDTOS);
         } else {
-            ioStreamsProvider.printInfo(localizationService.getLocalizedMessageByMultipleKeys("param.not.null","book.genres"));
+            ioStreamsProvider.printInfo(localizationService.getLocalizedMessageByMultipleKeys("param.not.null", "book.genres"));
             return true;
         }
         return false;
@@ -132,7 +160,7 @@ public class InteractionServiceImpl implements InteractionService {
             List<AuthorDTO> authorDTOS = Arrays.stream(authorsNames).map(AuthorDTO::new).collect(Collectors.toList());
             bookDTO.setAuthorDTOS(authorDTOS);
         } else {
-            ioStreamsProvider.printInfo(localizationService.getLocalizedMessageByMultipleKeys("param.not.null","book.authors"));
+            ioStreamsProvider.printInfo(localizationService.getLocalizedMessageByMultipleKeys("param.not.null", "book.authors"));
             return true;
         }
         return false;

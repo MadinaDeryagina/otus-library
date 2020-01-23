@@ -53,4 +53,20 @@ public class LibraryJpaApplicationCommands {
     public void deleteBookById(long id) {
         interactionService.deleteBookById(id);
     }
+
+    @ShellMethod(value = "add comment to book", key ={"acb"})
+    public void addCommentToBook(long bookId){
+        interactionService.addCommentToBook(bookId);
+    }
+
+    @ShellMethod(value = "show comments to book", key ={"scb"})
+    public void showCommentsToBook(long bookId){
+        System.out.println(interactionService.showBookComments(bookId));
+    }
+    @ShellMethod(value = "delete all comments from book", key = {"dcb"})
+    public void deleteAllCommentsFromBook(long bookId){
+        interactionService.deleteAllCommentsFromBook(bookId);
+    }
+
+
 }

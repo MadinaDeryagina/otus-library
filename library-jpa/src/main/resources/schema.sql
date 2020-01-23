@@ -32,3 +32,11 @@ create table books_genres_correlation
     foreign key (book_id) references books (id) ON DELETE CASCADE,
     foreign key (genre_id) references genres (id) ON DELETE CASCADE
 );
+drop table if exists comments;
+create table comments
+(
+    id long primary key auto_increment,
+    book_id long not null,
+    text varchar(2000),
+    foreign key (book_id) references books (id) ON DELETE CASCADE
+);

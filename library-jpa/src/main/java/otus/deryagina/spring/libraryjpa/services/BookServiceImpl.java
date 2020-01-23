@@ -4,17 +4,19 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import otus.deryagina.spring.libraryjpa.dao.AuthorDao;
 import otus.deryagina.spring.libraryjpa.dao.BookDao;
+import otus.deryagina.spring.libraryjpa.dao.CommentDao;
 import otus.deryagina.spring.libraryjpa.dao.GenreDao;
 import otus.deryagina.spring.libraryjpa.domain.Author;
 import otus.deryagina.spring.libraryjpa.domain.Book;
+import otus.deryagina.spring.libraryjpa.domain.Comment;
 import otus.deryagina.spring.libraryjpa.domain.Genre;
 import otus.deryagina.spring.libraryjpa.dto.AuthorDTO;
 import otus.deryagina.spring.libraryjpa.dto.BookDTO;
+import otus.deryagina.spring.libraryjpa.dto.CommentDTO;
 import otus.deryagina.spring.libraryjpa.dto.GenreDTO;
 import otus.deryagina.spring.libraryjpa.mapper.ModelMapper;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -26,6 +28,7 @@ public class BookServiceImpl implements BookService {
     private final BookDao bookDao;
     private final AuthorDao authorDao;
     private final GenreDao genreDao;
+    private final CommentDao commentDao;
     private final ModelMapper modelMapper;
 
 
@@ -132,6 +135,29 @@ public class BookServiceImpl implements BookService {
     @Override
     public void deleteBookById(long id) {
         bookDao.deleteBookById(id);
+    }
+
+    @Override
+    public void addCommentToBook(CommentDTO commentDTO) throws IllegalArgumentException {
+        Optional<Book> book = bookDao.findById(commentDTO.getBookId());
+        if (!book.isPresent()) {
+            throw new IllegalArgumentException("Invalid book id");
+        } else {
+            Comment commentToSave = modelMapper.dtoToEntity(commentDTO);
+            commentToSave.setBook(book.get());
+            commentDao.save(commentToSave);
+        }
+    }
+
+    @Override
+    public List<CommentDTO> showAllCommentsToBook(long bookId) {
+        List<Comment> comments = commentDao.findAllCommentsToBook(bookId);
+        return modelMapper.commentEntitiesToDTOS(comments);
+    }
+
+    @Override
+    public void deleteAllCommentsFromBook(long bookId) {
+        commentDao.deleteAllCommentsFromBook(bookId);
     }
 
 

@@ -44,3 +44,7 @@ insert into BOOKS_AUTHORS_CORRELATION
 values (4, 2);
 insert into BOOKS_GENRES_CORRELATION
 values (4, 3);
+insert into COMMENTS(id, book_id, text)
+values ( 1,1,'my test comment' );
+insert into COMMENTS(id, book_id, text)
+values ( 2,1,'my test comment 2' );
