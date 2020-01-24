@@ -55,5 +55,8 @@ public interface ModelMapper {
     @Mapping(target = "id", ignore = true)
     Comment dtoToEntity(CommentDTO commentDTO);
 
+    @Mapping(target = "bookId", source = "book.id")
+    CommentDTO dtoToEntity(Comment comment);
+
     List<CommentDTO> commentEntitiesToDTOS(List<Comment> comments);
 }
