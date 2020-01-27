@@ -11,7 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 @EqualsAndHashCode(exclude = "id")
 public class BookDTO {
-    private long id;
+    private String id;
     private String title;
     private List<AuthorDTO> authorDTOS;
     private List<GenreDTO> genreDTOS;

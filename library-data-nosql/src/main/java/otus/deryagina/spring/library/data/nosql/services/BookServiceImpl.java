@@ -2,7 +2,10 @@ package otus.deryagina.spring.library.data.nosql.services;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import otus.deryagina.spring.library.data.jpa.dao.*;
+import otus.deryagina.spring.library.data.nosql.dao.AuthorRepository;
+import otus.deryagina.spring.library.data.nosql.dao.BookRepository;
+import otus.deryagina.spring.library.data.nosql.dao.CommentRepository;
+import otus.deryagina.spring.library.data.nosql.dao.GenreRepository;
 import otus.deryagina.spring.library.data.nosql.domain.Author;
 import otus.deryagina.spring.library.data.nosql.domain.Book;
 import otus.deryagina.spring.library.data.nosql.domain.Comment;
@@ -12,10 +15,6 @@ import otus.deryagina.spring.library.data.nosql.dto.BookDTO;
 import otus.deryagina.spring.library.data.nosql.dto.CommentDTO;
 import otus.deryagina.spring.library.data.nosql.dto.GenreDTO;
 import otus.deryagina.spring.library.data.nosql.mapper.ModelMapper;
-import otus.deryagina.spring.library.data.nosql.dao.AuthorRepository;
-import otus.deryagina.spring.library.data.nosql.dao.BookRepository;
-import otus.deryagina.spring.library.data.nosql.dao.CommentRepository;
-import otus.deryagina.spring.library.data.nosql.dao.GenreRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -112,7 +111,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public BookDTO findBookById(long id) {
+    public BookDTO findBookById(String id) {
         Optional<Book> book = bookRepository.findById(id);
         return book.map(modelMapper::entityToDto).orElse(null);
     }
@@ -128,14 +127,16 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public void updateBook(long id, BookDTO targetInfo) {
+    public void updateBook(String id, BookDTO targetInfo) {
+        List<Author> authors = getAndInsertAuthors(targetInfo.getAuthorDTOS());
+        List<Genre> genres = getAndInsertGenres(targetInfo.getGenreDTOS());
         Book bookToSave = modelMapper.dtoToEntity(targetInfo);
         bookToSave.setId(id);
         bookRepository.save(bookToSave);
     }
 
     @Override
-    public void deleteBookById(long id) {
+    public void deleteBookById(String id) {
         bookRepository.deleteById(id);
     }
 
@@ -152,13 +153,13 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public List<CommentDTO> showAllCommentsToBook(long bookId) {
+    public List<CommentDTO> showAllCommentsToBook(String bookId) {
         List<Comment> comments = commentRepository.findAllByBook_Id(bookId);
         return modelMapper.commentEntitiesToDTOS(comments);
     }
 
     @Override
-    public void deleteAllCommentsFromBook(long bookId) {
+    public void deleteAllCommentsFromBook(String bookId) {
         commentRepository.deleteAllByBook_Id(bookId);
     }
 

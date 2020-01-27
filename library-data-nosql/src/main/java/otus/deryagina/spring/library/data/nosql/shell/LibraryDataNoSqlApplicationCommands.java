@@ -25,7 +25,7 @@ public class LibraryDataNoSqlApplicationCommands {
     }
 
     @ShellMethod(value = "show book by id ", key = {"sbi"})
-    public void showBookById(long id) {
+    public void showBookById(String id) {
         System.out.println(bookService.findBookById(id));
     }
 
@@ -45,26 +45,27 @@ public class LibraryDataNoSqlApplicationCommands {
     }
 
     @ShellMethod(value = "update book by id", key = {"updatebook", "ub"})
-    public void updateBookById(long id) {
+    public void updateBookById(String id) {
         interactionService.updateBookById(id);
     }
 
     @ShellMethod(value = "delete book by id", key = {"deletebook", "db"})
-    public void deleteBookById(long id) {
+    public void deleteBookById(String id) {
         interactionService.deleteBookById(id);
     }
 
-    @ShellMethod(value = "add comment to book", key ={"acb"})
-    public void addCommentToBook(long bookId){
+    @ShellMethod(value = "add comment to book", key = {"acb"})
+    public void addCommentToBook(String bookId) {
         interactionService.addCommentToBook(bookId);
     }
 
-    @ShellMethod(value = "show comments to book", key ={"scb"})
-    public void showCommentsToBook(long bookId){
+    @ShellMethod(value = "show comments to book", key = {"scb"})
+    public void showCommentsToBook(String bookId) {
         System.out.println(interactionService.showBookComments(bookId));
     }
+
     @ShellMethod(value = "delete all comments from book", key = {"dcb"})
-    public void deleteAllCommentsFromBook(long bookId){
+    public void deleteAllCommentsFromBook(String bookId) {
         interactionService.deleteAllCommentsFromBook(bookId);
     }
 

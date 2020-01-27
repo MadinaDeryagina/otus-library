@@ -1,11 +1,11 @@
-package otus.deryagina.spring.library.data.jpa.services;
+package otus.deryagina.spring.library.data.nosql.services;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -13,10 +13,7 @@ import otus.deryagina.spring.library.data.nosql.dao.BookRepository;
 import otus.deryagina.spring.library.data.nosql.dto.AuthorDTO;
 import otus.deryagina.spring.library.data.nosql.dto.BookDTO;
 import otus.deryagina.spring.library.data.nosql.dto.GenreDTO;
-import otus.deryagina.spring.library.data.jpa.mapper.ModelMapperImpl;
-import otus.deryagina.spring.library.data.nosql.services.BookService;
-import otus.deryagina.spring.library.data.nosql.services.BookServiceImpl;
-
+import otus.deryagina.spring.library.data.nosql.mapper.ModelMapperImpl;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,9 +23,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("BookService")
 @ExtendWith(SpringExtension.class)
-@DataJpaTest
+@DataMongoTest
 @Import({BookServiceImpl.class, ModelMapperImpl.class})
-@ComponentScan("otus.deryagina.spring.library.data.jpa.dao")
+@ComponentScan("otus.deryagina.spring.library.data.nosql.dao")
 class BookServiceImplTest {
 
     private static final String GIVEN_TITLE = "My book" ;
@@ -59,7 +56,7 @@ class BookServiceImplTest {
         targetDTO.setAuthorDTOS(listOfAuthors);
         targetDTO.setGenreDTOS(Collections.singletonList( new GenreDTO(FIRST_GENRE)));
         System.out.println(bookRepository.findAllByTitle(GIVEN_TITLE).toString());
-        bookService.updateBook(1,targetDTO);
+        bookService.updateBook("1",targetDTO);
         System.out.println(bookRepository.findAllByTitle(GIVEN_TITLE).toString());
         assertThat(bookRepository.findAllByTitle(GIVEN_TITLE).get(0).getGenres().size()).isEqualTo(1);
     }
@@ -71,7 +68,7 @@ class BookServiceImplTest {
         targetDTO.setAuthorDTOS(Collections.singletonList(new AuthorDTO("Mary")));
         targetDTO.setGenreDTOS(Collections.singletonList( new GenreDTO(FIRST_GENRE)));
         System.out.println(bookRepository.findAllByTitle(GIVEN_TITLE).toString());
-        bookService.updateBook(1,targetDTO);
+        bookService.updateBook("1",targetDTO);
         System.out.println(bookRepository.findAllByTitle(GIVEN_TITLE).toString());
         assertThat(bookRepository.findAllByTitle(GIVEN_TITLE).get(0).getGenres().size()).isEqualTo(1);
     }

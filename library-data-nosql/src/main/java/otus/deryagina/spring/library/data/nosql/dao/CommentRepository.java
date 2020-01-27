@@ -1,16 +1,12 @@
 package otus.deryagina.spring.library.data.nosql.dao;
 
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.mongodb.repository.MongoRepository;
 import otus.deryagina.spring.library.data.nosql.domain.Comment;
 
 import java.util.List;
 
-@Repository
-@Transactional
-public interface CommentRepository extends CrudRepository<Comment,Long> {
+public interface CommentRepository extends MongoRepository<Comment,String> {
 
-    void deleteAllByBook_Id(long bookId);
-    List<Comment> findAllByBook_Id(long bookId);
+    void deleteAllByBook_Id(String bookId);
+    List<Comment> findAllByBook_Id(String bookId);
 }

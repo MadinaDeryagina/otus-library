@@ -1,15 +1,13 @@
 package otus.deryagina.spring.library.data.nosql.dao;
 
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.mongodb.repository.MongoRepository;
 import otus.deryagina.spring.library.data.nosql.domain.Author;
 
 import java.util.List;
 
 
-@Repository
-public interface AuthorRepository extends CrudRepository<Author, Long> {
+public interface AuthorRepository extends MongoRepository<Author, String> {
 
-    List<Author> findAllByFullNameIn(List<String> names);
+   List<Author> findAllByFullNameIn(List<String> names);
 
 }

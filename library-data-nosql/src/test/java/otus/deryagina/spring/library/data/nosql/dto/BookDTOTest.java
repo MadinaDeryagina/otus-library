@@ -1,10 +1,7 @@
-package otus.deryagina.spring.library.data.jpa.dto;
+package otus.deryagina.spring.library.data.nosql.dto;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import otus.deryagina.spring.library.data.nosql.dto.AuthorDTO;
-import otus.deryagina.spring.library.data.nosql.dto.BookDTO;
-import otus.deryagina.spring.library.data.nosql.dto.GenreDTO;
 
 import java.util.Collections;
 

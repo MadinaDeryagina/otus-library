@@ -1,4 +1,4 @@
-package otus.deryagina.spring.library.data.jpa.mapper;
+package otus.deryagina.spring.library.data.nosql.mapper;
 
 
 import org.junit.jupiter.api.BeforeEach;
@@ -13,7 +13,6 @@ import otus.deryagina.spring.library.data.nosql.domain.Author;
 import otus.deryagina.spring.library.data.nosql.domain.Book;
 import otus.deryagina.spring.library.data.nosql.domain.Genre;
 import otus.deryagina.spring.library.data.nosql.dto.BookDTO;
-import otus.deryagina.spring.library.data.nosql.mapper.ModelMapper;
 
 import java.util.Arrays;
 import java.util.List;
@@ -38,11 +37,11 @@ class ModelMapperTest {
 
     @BeforeEach
     private void init() {
-        Author author1 = new Author(1, "Pushkin");
-        Author author2 = new Author(2,"Ne Pushkin");
-        Genre genre1 = new Genre(1, "Poetry");
-        Genre genre2 = new Genre(2,"Drama");
-        book = new Book(1, "Evgenyi Onegin", Arrays.asList(author1, author2),
+        Author author1 = new Author( "Pushkin");
+        Author author2 = new Author("Ne Pushkin");
+        Genre genre1 = new Genre( "Poetry");
+        Genre genre2 = new Genre("Drama");
+        book = new Book("1", "Evgenyi Onegin", Arrays.asList(author1, author2),
                 Arrays.asList(genre1, genre2));
     }
 

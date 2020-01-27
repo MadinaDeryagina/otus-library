@@ -1,15 +1,10 @@
-package otus.deryagina.spring.library.data.jpa.dao;
+package otus.deryagina.spring.library.data.nosql.dao;
 
-import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.context.annotation.ComponentScan;
-import otus.deryagina.spring.library.data.nosql.dao.GenreRepository;
 import otus.deryagina.spring.library.data.nosql.domain.Genre;
 
 import java.util.ArrayList;
@@ -20,11 +15,7 @@ import java.util.stream.Collectors;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("GenreRepository")
-@Slf4j
-@DataJpaTest
-@EntityScan("otus.deryagina.spring.library.data.jpa.domain")
-@ComponentScan(basePackageClasses = GenreRepository.class)
-class GenreRepositoryTest {
+class GenreRepositoryTest extends AbstractRepositoryTest {
 
     private static final String INVALID_NAME = "BLA_BLA";
     private static List<String> namesOfGenres;
@@ -37,7 +28,7 @@ class GenreRepositoryTest {
     @BeforeAll
     static void init() {
         namesOfGenres = new ArrayList<>();
-        namesOfGenres.add("Poetry");
+        namesOfGenres.add("Prose");
         namesOfGenres.add("Drama");
     }
 
@@ -48,15 +39,14 @@ class GenreRepositoryTest {
         List<Genre> genresByNames = genreRepository.findAllByNameIn(namesOfGenres);
         List<String> namesFromDB = genresByNames.stream()
                 .map(Genre::getName).collect(Collectors.toList());
-        assertThat(namesFromDB).containsSequence(namesOfGenres);
+        assertThat(namesFromDB).containsExactlyInAnyOrder(namesOfGenres.get(0), namesOfGenres.get(1));
     }
 
     @Test
     @DisplayName(("should return correct genre by correct name"))
     void findGenreByCorrectName() {
         Optional<Genre> genre = genreRepository.findByName(GIVEN_GENRE_NAME);
-        assertThat(genre).isPresent();
-        assertThat(genre.get().getName()).isEqualTo(GIVEN_GENRE_NAME);
+        assertThat(genre).isNotEmpty().get().matches(g-> g.getName().equals(GIVEN_GENRE_NAME));
     }
 
     @Test

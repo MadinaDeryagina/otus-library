@@ -12,17 +12,17 @@ public interface BookService {
 
     List<BookDTO> findAllBooks();
 
-    BookDTO findBookById(long id);
+    BookDTO findBookById(String id);
 
     List<BookDTO> findBooksByTitle(String title);
 
-    void updateBook(long id, BookDTO targetInfo);
+    void updateBook(String id, BookDTO targetInfo);
 
-    void deleteBookById(long id);
+    void deleteBookById(String id);
 
     void addCommentToBook(CommentDTO commentDTO) throws IllegalArgumentException;
 
-    List<CommentDTO> showAllCommentsToBook(long bookId);
+    List<CommentDTO> showAllCommentsToBook(String bookId);
 
-    void deleteAllCommentsFromBook(long bookId);
+    void deleteAllCommentsFromBook(String bookId);
 }

@@ -8,13 +8,13 @@ import java.util.List;
 public interface InteractionService {
     void askToAddBook();
 
-    void updateBookById(long id);
+    void updateBookById(String id);
 
-    void deleteBookById(long id);
+    void deleteBookById(String id);
 
-    void addCommentToBook(long bookId);
+    void addCommentToBook(String bookId);
 
-    List<CommentDTO> showBookComments(long bookId);
+    List<CommentDTO> showBookComments(String bookId);
 
-    void deleteAllCommentsFromBook(long bookId);
+    void deleteAllCommentsFromBook(String  bookId);
 }

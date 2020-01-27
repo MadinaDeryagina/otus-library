@@ -55,11 +55,10 @@ public class InteractionServiceImpl implements InteractionService {
         } else if (yesOrNo.equalsIgnoreCase(localizationService.getLocalizedMessage("no"))) {
             //which book do you want yo update
             ioStreamsProvider.printInfo(localizationService.getLocalizedMessage("which.to.update"));
-            String bookIdToUpdateString = ioStreamsProvider.readData();
-            long bookIdToUpdate = Long.parseLong(bookIdToUpdateString);
+            String bookIdToUpdate = ioStreamsProvider.readData();
             boolean isValidId = false;
             for (BookDTO currentBook : booksWithSameTitle) {
-                if (currentBook.getId() == bookIdToUpdate) {
+                if (currentBook.getId().equals(bookIdToUpdate)) {
                     isValidId = true;
                 }
             }
@@ -74,7 +73,7 @@ public class InteractionServiceImpl implements InteractionService {
     }
 
     @Override
-    public void updateBookById(long id) {
+    public void updateBookById(String id) {
         if (bookService.findBookById(id) == null) {
             ioStreamsProvider.printInfo(localizationService.getLocalizedMessage("invalid.input.id", id));
             return;
@@ -88,16 +87,17 @@ public class InteractionServiceImpl implements InteractionService {
     }
 
     @Override
-    public void deleteBookById(long id) {
+    public void deleteBookById(String id) {
         if (bookService.findBookById(id) == null) {
             ioStreamsProvider.printInfo(localizationService.getLocalizedMessage("invalid.input.id", id));
             return;
         }
         bookService.deleteBookById(id);
+        ioStreamsProvider.printInfo(localizationService.getLocalizedMessage("book.delete.success", id));
     }
 
     @Override
-    public void addCommentToBook(long bookId) {
+    public void addCommentToBook(String bookId) {
         ioStreamsProvider.printInfo(localizationService.getLocalizedMessage("write.comment"));
         String comment = ioStreamsProvider.readData();
         if (isInputValid(comment)) {
@@ -110,14 +110,14 @@ public class InteractionServiceImpl implements InteractionService {
     }
 
     @Override
-    public List<CommentDTO> showBookComments(long bookId) {
+    public List<CommentDTO> showBookComments(String bookId) {
         List<CommentDTO> commentDTOS=bookService.showAllCommentsToBook(bookId);
         log.info(commentDTOS.toString());
         return  commentDTOS;
     }
 
     @Override
-    public void deleteAllCommentsFromBook(long bookId) {
+    public void deleteAllCommentsFromBook(String bookId) {
         bookService.deleteAllCommentsFromBook(bookId);
         ioStreamsProvider.printInfo(localizationService.getLocalizedMessage("comments.deleted.success"));
     }

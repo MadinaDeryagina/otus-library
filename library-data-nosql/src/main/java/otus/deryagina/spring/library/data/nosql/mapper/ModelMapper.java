@@ -35,12 +35,8 @@ public interface ModelMapper {
 
     GenreDTO entityToDto(Genre genre);
 
-    @Named("mapWithoutId")
-    @Mapping(target = "id", ignore = true)
     Author dtoToEntity(AuthorDTO authorDTO);
 
-    @Named("mapWithoutId")
-    @Mapping(target = "id", ignore = true)
     Genre dtoToEntity(GenreDTO genreDTO);
 
     @Named("mapWithoutId")
@@ -54,6 +50,9 @@ public interface ModelMapper {
     @Named("mapWithoutId")
     @Mapping(target = "id", ignore = true)
     Comment dtoToEntity(CommentDTO commentDTO);
+
+    @Mapping(target = "bookId", source = "book.id")
+    CommentDTO entityToDto(Comment comment);
 
     List<CommentDTO> commentEntitiesToDTOS(List<Comment> comments);
 }

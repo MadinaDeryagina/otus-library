@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @EqualsAndHashCode
 public class CommentDTO {
-    private long bookId;
+    private String bookId;
     private String text;
 
     @Override
