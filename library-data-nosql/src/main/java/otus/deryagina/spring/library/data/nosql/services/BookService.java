@@ -20,6 +20,8 @@ public interface BookService {
 
     void deleteBookById(String id);
 
+    boolean isExistsBookById(String bookId);
+
     void addCommentToBook(CommentDTO commentDTO) throws IllegalArgumentException;
 
     List<CommentDTO> showAllCommentsToBook(String bookId);

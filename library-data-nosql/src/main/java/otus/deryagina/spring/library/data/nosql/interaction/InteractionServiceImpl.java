@@ -88,7 +88,7 @@ public class InteractionServiceImpl implements InteractionService {
 
     @Override
     public void deleteBookById(String id) {
-        if (bookService.findBookById(id) == null) {
+        if (!bookService.isExistsBookById(id)) {
             ioStreamsProvider.printInfo(localizationService.getLocalizedMessage("invalid.input.id", id));
             return;
         }

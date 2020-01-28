@@ -141,6 +141,11 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    public boolean isExistsBookById(String bookId) {
+        return bookRepository.existsById(bookId);
+    }
+
+    @Override
     public void addCommentToBook(CommentDTO commentDTO) throws IllegalArgumentException {
         Optional<Book> book = bookRepository.findById(commentDTO.getBookId());
         if (!book.isPresent()) {
