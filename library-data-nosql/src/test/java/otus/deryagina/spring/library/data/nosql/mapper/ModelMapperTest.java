@@ -37,8 +37,8 @@ class ModelMapperTest {
 
     @BeforeEach
     private void init() {
-        Author author1 = new Author( "Pushkin");
-        Author author2 = new Author("Ne Pushkin");
+        Author author1 = new Author( "4","Pushkin");
+        Author author2 = new Author("5","Ne Pushkin");
         Genre genre1 = new Genre( "Poetry");
         Genre genre2 = new Genre("Drama");
         book = new Book("1", "Evgenyi Onegin", Arrays.asList(author1, author2),

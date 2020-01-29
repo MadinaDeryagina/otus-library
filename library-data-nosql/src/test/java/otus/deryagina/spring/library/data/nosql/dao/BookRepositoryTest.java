@@ -31,6 +31,8 @@ class BookRepositoryTest extends AbstractRepositoryTest {
     private static final String EXISTING_GENRE_NAME = "Poetry";
     private static final String EXISTING_AUTHOR_NAME = "First author";
     private static final String NEW_GIVEN_TITLE = "Updated Title";
+    private static final String TITLE_OF_BOOK_WITH_TWO_AUTHORS = "Book with two authors";
+    private static final String SECOND_AUTHOR_NAME ="Second Author Name" ;
 
 
     @Autowired
@@ -40,14 +42,23 @@ class BookRepositoryTest extends AbstractRepositoryTest {
     private MongoTemplate mongoTemplate;
 
     private Book myBook;
+    private Book myBookWithTwoAuthors;
+    private Author myAuthor;
+    private Author mySecondAuthor;
 
     @BeforeEach
     void init() {
         List<Author> myAuthors = new ArrayList<>();
-        myAuthors.add(new Author(EXISTING_AUTHOR_NAME));
+        myAuthor = new Author(EXISTING_AUTHOR_NAME);
+        myAuthors.add(myAuthor);
         List<Genre> myGenres = new ArrayList<>();
         myGenres.add(new Genre(EXISTING_GENRE_NAME));
         myBook = new Book(EXPECTED_BOOK_TITLE, myAuthors, myGenres);
+        List<Author> authorsForBookWithTwoAuthors = new ArrayList<>();
+        mySecondAuthor = new Author(SECOND_AUTHOR_NAME);
+        authorsForBookWithTwoAuthors.add(myAuthor);
+        authorsForBookWithTwoAuthors.add(mySecondAuthor);
+        myBookWithTwoAuthors = new Book(TITLE_OF_BOOK_WITH_TWO_AUTHORS, authorsForBookWithTwoAuthors, myGenres);
     }
 
     @DisplayName("should return correct book count in database ")
@@ -125,5 +136,27 @@ class BookRepositoryTest extends AbstractRepositoryTest {
             fail("incorrect update book title");
         }
         System.out.println(actual);
+    }
+
+    @DisplayName("should return true if there is a book containing expected author")
+    @Test
+    void shouldCorrectlyCheckIfThereIsABookContainingExpectedAuthor(){
+        myBook = mongoTemplate.save(myBook);
+        assertThat(bookRepository.existsByAuthorsContaining(myAuthor)).isTrue();
+        bookRepository.delete(myBook);
+    }
+
+    @DisplayName("should return true if there is a book containing expected author, when book has two author")
+    @Test
+    void shouldCorrectlyCheckIfThereIsABookContainingExpectedAuthorWhenAuthorIsOneOfAuthors(){
+        myBookWithTwoAuthors = mongoTemplate.save(myBookWithTwoAuthors);
+        assertThat(bookRepository.existsByAuthorsContaining(mySecondAuthor)).isTrue();
+        bookRepository.delete(myBookWithTwoAuthors);
+    }
+
+    @DisplayName("should return false if there is no book containing expected author")
+    @Test
+    void shouldReturnFalseCheckIfThereIsABookContainingExpectedAuthor(){
+        assertThat(bookRepository.existsByAuthorsContaining(myAuthor)).isFalse();
     }
 }

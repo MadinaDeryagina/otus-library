@@ -5,7 +5,10 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.ComponentScan;
+import otus.deryagina.spring.library.data.nosql.domain.Author;
 import otus.deryagina.spring.library.data.nosql.domain.Genre;
+import otus.deryagina.spring.library.data.nosql.events.InvalidObjectDeletion;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,9 +18,11 @@ import java.util.stream.Collectors;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("GenreRepository")
+@ComponentScan("otus.deryagina.spring.library.data.nosql.events")
 class GenreRepositoryTest extends AbstractRepositoryTest {
 
     private static final String INVALID_NAME = "BLA_BLA";
+    private static final String EXPECTED_MESSAGE ="There are books in library containing this genre. Delete it firstly" ;
     private static List<String> namesOfGenres;
     private static final String GIVEN_GENRE_NAME = "Drama";
 
@@ -64,4 +69,14 @@ class GenreRepositoryTest extends AbstractRepositoryTest {
         Assertions.assertThat(genreRepository.findByName(INVALID_NAME)).isNotPresent();
     }
 
+    @Test
+    @DisplayName("should throw exception if try delete genre which is in book")
+    void shouldThrowExceptionIfTryDeleteGenreWhichIsInABook(){
+        Optional<Genre> prose = genreRepository.findByName("Prose");
+        InvalidObjectDeletion invalidObjectDeletion = org.junit.jupiter.api.Assertions.assertThrows(InvalidObjectDeletion.class, () -> {
+            genreRepository.delete(prose.get());
+        });
+        assertThat(invalidObjectDeletion.getMessage()).isEqualTo(EXPECTED_MESSAGE);
+
+    }
 }
