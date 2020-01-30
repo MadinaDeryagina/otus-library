@@ -1,0 +1,8 @@
+application:
+  version: '@project.version@'
+  locale-name: eng_US
+spring:
+  data:
+    mongodb:
+      database: library
+
