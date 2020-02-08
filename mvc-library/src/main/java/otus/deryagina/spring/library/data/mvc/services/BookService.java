@@ -6,13 +6,14 @@ import otus.deryagina.spring.library.data.mvc.dto.BookDTO;
 import otus.deryagina.spring.library.data.mvc.dto.CommentDTO;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface BookService {
     Book addAsNewBook(BookDTO bookDTO);
 
     List<BookDTO> findAllBooks();
 
-    BookDTO findBookById(long id);
+    Optional<BookDTO> findBookById(long id);
 
     List<BookDTO> findBooksByTitle(String title);
 
@@ -25,4 +26,6 @@ public interface BookService {
     List<CommentDTO> showAllCommentsToBook(long bookId);
 
     void deleteAllCommentsFromBook(long bookId);
+
+    Book saveOrUpdate(BookDTO bookDTO);
 }

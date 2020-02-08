@@ -33,3 +33,6 @@ values ( 2 ,6);
 
 insert into COMMENTS(id, book_id, text)
 values ( 1,1,'my test comment' );
+
+insert into BOOKS_AUTHORS_CORRELATION
+values ( 2, 1 );

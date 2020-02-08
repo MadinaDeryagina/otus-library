@@ -102,7 +102,7 @@ public class BookServiceImpl implements BookService {
     @Override
     public List<BookDTO> findAllBooks() {
         List<BookDTO> resultList = new ArrayList<>();
-        List<Book> listOfBooks = bookRepository.findAll();
+        List<Book> listOfBooks = bookRepository.findAllByOrderByTitleAsc();
         if (listOfBooks == null || listOfBooks.isEmpty()) {
             return resultList;
         }
@@ -111,9 +111,9 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public BookDTO findBookById(long id) {
+    public Optional<BookDTO> findBookById(long id) {
         Optional<Book> book = bookRepository.findById(id);
-        return book.map(modelMapper::entityToDto).orElse(null);
+        return book.map(modelMapper::entityToDto);
     }
 
     @Override
@@ -159,6 +159,18 @@ public class BookServiceImpl implements BookService {
     @Override
     public void deleteAllCommentsFromBook(long bookId) {
         commentRepository.deleteAllByBook_Id(bookId);
+    }
+
+    @Override
+    public Book saveOrUpdate(BookDTO bookDTO) {
+        List<Author> authors = getAndInsertAuthors(bookDTO.getAuthorDTOS());
+        List<Genre> genres = getAndInsertGenres(bookDTO.getGenreDTOS());
+        Book book = new Book();
+        book.setId(bookDTO.getId());
+        book.setTitle(bookDTO.getTitle());
+        book.setAuthors(authors);
+        book.setGenres(genres);
+        return bookRepository.save(book);
     }
 
 
