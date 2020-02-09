@@ -4,10 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import otus.deryagina.spring.library.data.mvc.dto.BookDTO;
 import otus.deryagina.spring.library.data.mvc.services.BookService;
 
@@ -19,18 +16,18 @@ public class BookController {
 
     private final BookService bookService;
 
-    @GetMapping("/books")
-    public String getAllBooks(Model model) {
+    @GetMapping("/show-all-books")
+    public String showAllBooks(Model model) {
         List<BookDTO> bookDTOList = bookService.findAllBooks();
         System.out.println(bookDTOList);
         model.addAttribute("books", bookDTOList);
         return "books/books";
     }
 
-    @GetMapping("/delete")
+    @GetMapping("/delete-book")
     public String deleteBookById(@RequestParam("id") long id) {
         bookService.deleteBookById(id);
-        return "redirect:/books";
+        return "redirect:/show-all-books";
     }
 
     @GetMapping("/show-form-for-add-book")
@@ -50,7 +47,7 @@ public class BookController {
     @PostMapping("/save-book")
     public String saveBook(@ModelAttribute("book") @Validated BookDTO bookDTO) {
         bookService.saveOrUpdate(bookDTO);
-        return "redirect:/books";
+        return "redirect:/show-all-books";
     }
 
 
