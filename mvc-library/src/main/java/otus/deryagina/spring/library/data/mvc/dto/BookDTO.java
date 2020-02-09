@@ -2,6 +2,7 @@ package otus.deryagina.spring.library.data.mvc.dto;
 
 import lombok.*;
 
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 @AllArgsConstructor
@@ -12,6 +13,7 @@ import java.util.List;
 @EqualsAndHashCode(exclude = "id")
 public class BookDTO {
     private long id;
+    @NotBlank
     private String title;
     private List<AuthorDTO> authorDTOS;
     private List<GenreDTO> genreDTOS;

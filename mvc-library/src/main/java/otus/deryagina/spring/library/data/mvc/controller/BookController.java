@@ -27,13 +27,6 @@ public class BookController {
         return "books/books";
     }
 
-//    @GetMapping("/book")
-//    public String showBookFullInfo(@RequestParam("id") long id, Model model) {
-//        BookDTO bookDTO = bookService.findBookById(id).orElseThrow(BookNotFoundException::new);
-//        model.addAttribute("book", bookDTO);
-//        return "full-book-info";
-//    }
-
     @GetMapping("/delete")
     public String deleteBookById(@RequestParam("id") long id) {
         bookService.deleteBookById(id);
@@ -56,8 +49,6 @@ public class BookController {
 
     @PostMapping("/save-book")
     public String saveBook(@ModelAttribute("book") @Validated BookDTO bookDTO) {
-        //если bookId равнен 0, то проверка на наличие такой же книге в библиотеке
-        //TODO: если такая же книга есть а библиотеке, то редирект на ее страницу с апдейтом
         bookService.saveOrUpdate(bookDTO);
         return "redirect:/books";
     }

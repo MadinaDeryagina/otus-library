@@ -59,7 +59,8 @@ class BookServiceImplTest {
         targetDTO.setAuthorDTOS(listOfAuthors);
         targetDTO.setGenreDTOS(Collections.singletonList( new GenreDTO(FIRST_GENRE)));
         System.out.println(bookRepository.findAllByTitle(GIVEN_TITLE).toString());
-        //bookService.updateBook(1,targetDTO);
+        targetDTO.setId(1);
+        bookService.saveOrUpdate(targetDTO);
         System.out.println(bookRepository.findAllByTitle(GIVEN_TITLE).toString());
         assertThat(bookRepository.findAllByTitle(GIVEN_TITLE).get(0).getGenres().size()).isEqualTo(1);
     }
@@ -71,7 +72,8 @@ class BookServiceImplTest {
         targetDTO.setAuthorDTOS(Collections.singletonList(new AuthorDTO("Mary")));
         targetDTO.setGenreDTOS(Collections.singletonList( new GenreDTO(FIRST_GENRE)));
         System.out.println(bookRepository.findAllByTitle(GIVEN_TITLE).toString());
-       // bookService.updateBook(1,targetDTO);
+        targetDTO.setId(1);
+        bookService.saveOrUpdate(targetDTO);
         System.out.println(bookRepository.findAllByTitle(GIVEN_TITLE).toString());
         assertThat(bookRepository.findAllByTitle(GIVEN_TITLE).get(0).getGenres().size()).isEqualTo(1);
     }

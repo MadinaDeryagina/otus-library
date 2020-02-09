@@ -145,11 +145,6 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public Book saveOrUpdate(BookDTO bookDTO) {
-        if(bookDTO.getId()==0){
-
-        }
-        // if there is a book with same title,
-
         List<Author> authors = getAndInsertAuthors(bookDTO.getAuthorDTOS());
         List<Genre> genres = getAndInsertGenres(bookDTO.getGenreDTOS());
         Book book = new Book();
