@@ -3,9 +3,12 @@ package otus.deryagina.spring.library.data.mvc.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import otus.deryagina.spring.library.data.mvc.dto.BookDTO;
-import otus.deryagina.spring.library.data.mvc.exceptions.BookNotFoundException;
 import otus.deryagina.spring.library.data.mvc.services.BookService;
 
 import java.util.List;
@@ -52,7 +55,7 @@ public class BookController {
     }
 
     @PostMapping("/save-book")
-    public String saveBook(@ModelAttribute("book") BookDTO bookDTO) {
+    public String saveBook(@ModelAttribute("book") @Validated BookDTO bookDTO) {
         //если bookId равнен 0, то проверка на наличие такой же книге в библиотеке
         //TODO: если такая же книга есть а библиотеке, то редирект на ее страницу с апдейтом
         bookService.saveOrUpdate(bookDTO);

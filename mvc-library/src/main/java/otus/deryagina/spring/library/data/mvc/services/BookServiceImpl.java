@@ -31,18 +31,6 @@ public class BookServiceImpl implements BookService {
     private final CommentRepository commentRepository;
     private final ModelMapper modelMapper;
 
-
-    @Override
-    public Book addAsNewBook(BookDTO bookDTO) {
-        List<Author> authors = getAndInsertAuthors(bookDTO.getAuthorDTOS());
-        List<Genre> genres = getAndInsertGenres(bookDTO.getGenreDTOS());
-        Book book = new Book();
-        book.setTitle(bookDTO.getTitle());
-        book.setAuthors(authors);
-        book.setGenres(genres);
-        return bookRepository.save(book);
-    }
-
     /**
      * @param genreDTOS list of genre DTO
      * @return list of corresponding genres from database( if genre not in database insert it and return
@@ -126,12 +114,6 @@ public class BookServiceImpl implements BookService {
         }
     }
 
-    @Override
-    public void updateBook(long id, BookDTO targetInfo) {
-        Book bookToSave = modelMapper.dtoToEntity(targetInfo);
-        bookToSave.setId(id);
-        bookRepository.save(bookToSave);
-    }
 
     @Override
     public void deleteBookById(long id) {
@@ -163,6 +145,11 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public Book saveOrUpdate(BookDTO bookDTO) {
+        if(bookDTO.getId()==0){
+
+        }
+        // if there is a book with same title,
+
         List<Author> authors = getAndInsertAuthors(bookDTO.getAuthorDTOS());
         List<Genre> genres = getAndInsertGenres(bookDTO.getGenreDTOS());
         Book book = new Book();

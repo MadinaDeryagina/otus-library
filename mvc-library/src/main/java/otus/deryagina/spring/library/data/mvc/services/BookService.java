@@ -9,15 +9,11 @@ import java.util.List;
 import java.util.Optional;
 
 public interface BookService {
-    Book addAsNewBook(BookDTO bookDTO);
-
     List<BookDTO> findAllBooks();
 
     Optional<BookDTO> findBookById(long id);
 
     List<BookDTO> findBooksByTitle(String title);
-
-    void updateBook(long id, BookDTO targetInfo);
 
     void deleteBookById(long id);
 

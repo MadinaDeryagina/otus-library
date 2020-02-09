@@ -1,6 +1,5 @@
 application:
   version: '@project.version@'
-  locale-name: eng_US
 spring:
   datasource:
     url: jdbc:h2:mem:testdb3

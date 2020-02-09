@@ -18,12 +18,15 @@
         <!-- hidden form field for handle update -->
         <input type="hidden" th:field="*{id}"/>
         <input type="text" th:field="*{title}"
+               th:required="required"
                 class="form-control mb-4 col-4" th:placeholder="#{book.title}">
 
         <input type="text" th:field="*{authorDTOS}"
+               th:required="required"
                class="form-control mb-4 col-4" th:placeholder="#{book.authors.example}">
 
         <input type="text" th:field="*{genreDTOS}"
+               th:required="required"
                class="form-control mb-4 col-4" th:placeholder="#{book.genres.example}">
 
         <button type="submit" class="btn btn-info col-2" th:text="#{save}">Save</button>

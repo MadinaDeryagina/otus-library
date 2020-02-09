@@ -11,5 +11,4 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties("application")
 public class ApplicationSettings {
     private String version;
-    private String localeName;
 }
