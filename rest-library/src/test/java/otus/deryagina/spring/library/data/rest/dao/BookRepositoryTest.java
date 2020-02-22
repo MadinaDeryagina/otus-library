@@ -1,4 +1,4 @@
-package otus.deryagina.spring.library.data.mvc.dao;
+package otus.deryagina.spring.library.data.rest.dao;
 
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
@@ -9,10 +9,10 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.ComponentScan;
-import otus.deryagina.spring.library.data.mvc.dao.BookRepository;
-import otus.deryagina.spring.library.data.mvc.domain.Author;
-import otus.deryagina.spring.library.data.mvc.domain.Book;
-import otus.deryagina.spring.library.data.mvc.domain.Genre;
+import otus.deryagina.spring.library.data.rest.dao.BookRepository;
+import otus.deryagina.spring.library.data.rest.domain.Author;
+import otus.deryagina.spring.library.data.rest.domain.Book;
+import otus.deryagina.spring.library.data.rest.domain.Genre;
 
 import java.util.Collections;
 import java.util.stream.Collectors;
@@ -56,14 +56,14 @@ class BookRepositoryTest {
     @DisplayName("should  return correct book with correct given id")
     @Test
     void shouldReturnCorrectBookById(){
-        Assertions.assertThat(bookRepository.findById(GIVEN_ID).get()).hasFieldOrPropertyWithValue("title",EXPECTED_BOOK_TITLE);
+        assertThat(bookRepository.findById(GIVEN_ID).get()).hasFieldOrPropertyWithValue("title",EXPECTED_BOOK_TITLE);
     }
 
 
     @DisplayName("should return empty optional with incorrect id")
     @Test
     void shouldReturnNullWithIncorrectId(){
-        Assertions.assertThat(bookRepository.findById(INCORRECT_GIVEN_ID)).isNotPresent();
+        assertThat(bookRepository.findById(INCORRECT_GIVEN_ID)).isNotPresent();
     }
 
 
@@ -84,7 +84,7 @@ class BookRepositoryTest {
     @DisplayName("should return empty array if there is no books with given title")
     @Test
     void shouldReturnEmptyArrayIfNoBookWithGivenTitle(){
-        Assertions.assertThat(bookRepository.findAllByTitle(NO_BOOK_TITLE)).isEmpty();
+        assertThat(bookRepository.findAllByTitle(NO_BOOK_TITLE)).isEmpty();
     }
 
     @DisplayName("should add book to DB")
