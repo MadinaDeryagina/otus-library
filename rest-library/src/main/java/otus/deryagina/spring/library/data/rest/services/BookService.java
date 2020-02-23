@@ -24,5 +24,5 @@ public interface BookService {
 
     void deleteAllCommentsFromBook(long bookId);
 
-    Book saveOrUpdate(BookDTO bookDTO);
+    BookDTO saveOrUpdate(BookDTO bookDTO);
 }

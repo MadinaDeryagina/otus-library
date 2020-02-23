@@ -52,7 +52,7 @@ class BookControllerTest {
         bookDTO2.setAuthorDTOS(Collections.singletonList(authorDTO1));
         bookDTO1.setGenreDTOS(Collections.singletonList(genreDTO));
         when(bookService.findAllBooks()).thenReturn(Arrays.asList(bookDTO1, bookDTO2));
-        mockMvc.perform(get("/show-all-books"))
+        mockMvc.perform(get("/books"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$[0].title").value(bookDTO1.getTitle()))

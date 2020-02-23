@@ -14,7 +14,9 @@ import java.util.List;
 @EqualsAndHashCode(exclude = "id")
 public class BookDTO {
     private long id;
+
     @NotBlank
+    @JsonProperty("title")
     private String title;
 
     @JsonProperty("authors")

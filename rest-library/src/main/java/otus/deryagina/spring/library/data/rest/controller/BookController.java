@@ -2,10 +2,10 @@ package otus.deryagina.spring.library.data.rest.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
 import otus.deryagina.spring.library.data.rest.dto.BookDTO;
 import otus.deryagina.spring.library.data.rest.services.BookService;
 
@@ -23,31 +23,30 @@ public class BookController {
         return ResponseEntity.ok(bookDTOList);
     }
 
-    @DeleteMapping("/book")
-    public ResponseEntity<Void> deleteBookById(@RequestParam("id") long id) {
+    @GetMapping("/book/{id}")
+    public ResponseEntity<BookDTO> getBookById(@PathVariable("id") long id){
+        return ResponseEntity.of(bookService.findBookById(id));
+    }
+
+    @DeleteMapping("/book/{id}")
+    public ResponseEntity<Void> deleteBookById(@PathVariable("id") long id) {
         bookService.deleteBookById(id);
         return ResponseEntity.noContent().build();
     }
 
-//    @GetMapping("/show-form-for-add-book")
-//    public String showFormForAddBook(Model model) {
-//        BookDTO bookDTO = new BookDTO();
-//        model.addAttribute("book", bookDTO);
-//        return "books/book-form";
-//    }
-//
-//    @GetMapping("/show-form-for-update-book")
-//    public String showFormForUpdateBook(@RequestParam("bookId")long bookId, Model model) {
-//        BookDTO bookDTO = bookService.findBookById(bookId).get();
-//        model.addAttribute("book", bookDTO);
-//        return "books/book-form";
-//    }
-//
-//    @PostMapping("/save-book")
-//    public String saveBook(@ModelAttribute("book") @Validated BookDTO bookDTO) {
-//        bookService.saveOrUpdate(bookDTO);
-//        return "redirect:/show-all-books";
-//    }
+    @PostMapping("/book")
+    public ResponseEntity<Void> saveBook(UriComponentsBuilder builder, @RequestBody @Validated BookDTO bookDTO) {
+        bookDTO.setId(0);
+        bookDTO = bookService.saveOrUpdate(bookDTO);
+        UriComponents uriComponents =
+                builder.path("/book/{id}").buildAndExpand(bookDTO.getId());
+        return  ResponseEntity.created(uriComponents.toUri()).build();
+    }
 
+    @PutMapping("/book/{id}")
+    public ResponseEntity<BookDTO> updateBook(@PathVariable("id") long id, @RequestBody @Validated BookDTO bookDTO){
+        bookDTO.setId(id);
+        return ResponseEntity.ok(bookService.saveOrUpdate(bookDTO));
+    }
 
 }

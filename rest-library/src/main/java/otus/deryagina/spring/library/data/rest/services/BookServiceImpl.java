@@ -145,7 +145,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public Book saveOrUpdate(BookDTO bookDTO) {
+    public BookDTO saveOrUpdate(BookDTO bookDTO) {
         List<Author> authors = getAndInsertAuthors(bookDTO.getAuthorDTOS());
         List<Genre> genres = getAndInsertGenres(bookDTO.getGenreDTOS());
         Book book = new Book();
@@ -153,7 +153,8 @@ public class BookServiceImpl implements BookService {
         book.setTitle(bookDTO.getTitle());
         book.setAuthors(authors);
         book.setGenres(genres);
-        return bookRepository.save(book);
+        book = bookRepository.save(book);
+        return modelMapper.entityToDto(book);
     }
 
 
