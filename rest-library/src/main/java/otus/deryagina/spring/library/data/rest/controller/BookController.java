@@ -1,6 +1,7 @@
 package otus.deryagina.spring.library.data.rest.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -11,6 +12,7 @@ import otus.deryagina.spring.library.data.rest.services.BookService;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class BookController {
@@ -36,6 +38,7 @@ public class BookController {
 
     @PostMapping("/book")
     public ResponseEntity<Void> saveBook(UriComponentsBuilder builder, @RequestBody @Validated BookDTO bookDTO) {
+        log.info("DTO: " + bookDTO);
         bookDTO.setId(0);
         bookDTO = bookService.saveOrUpdate(bookDTO);
         UriComponents uriComponents =
