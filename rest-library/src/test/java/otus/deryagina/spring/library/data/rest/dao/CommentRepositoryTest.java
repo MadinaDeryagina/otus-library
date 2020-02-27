@@ -1,4 +1,4 @@
-package otus.deryagina.spring.library.data.mvc.dao;
+package otus.deryagina.spring.library.data.rest.dao;
 
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
@@ -9,9 +9,9 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.ComponentScan;
-import otus.deryagina.spring.library.data.mvc.dao.CommentRepository;
-import otus.deryagina.spring.library.data.mvc.domain.Book;
-import otus.deryagina.spring.library.data.mvc.domain.Comment;
+import otus.deryagina.spring.library.data.rest.dao.CommentRepository;
+import otus.deryagina.spring.library.data.rest.domain.Book;
+import otus.deryagina.spring.library.data.rest.domain.Comment;
 
 import java.util.List;
 
