@@ -1,0 +1,7 @@
+application:
+  version: '@project.version@'
+spring:
+  data:
+    mongodb:
+      database: library
+
