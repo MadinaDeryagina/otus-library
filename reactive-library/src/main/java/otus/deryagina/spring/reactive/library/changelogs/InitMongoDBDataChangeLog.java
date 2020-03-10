@@ -20,6 +20,7 @@ public class InitMongoDBDataChangeLog {
     private Author shakespeare;
     private Author almostShakespeare;
     private Author tolkien;
+    private Author authorWithNoBooks;
 
     @ChangeSet(order = "000", id = "dropDB", author = "madina", runAlways = true)
     public void dropDb(MongoDatabase database) {
@@ -28,22 +29,24 @@ public class InitMongoDBDataChangeLog {
 
     @ChangeSet(order = "001", id = "initGenres", author = "madina", runAlways = true)
     public void initGenres(MongoTemplate template) {
-        drama = new Genre("Drama");
+        drama = new Genre("1","Drama");
         drama = template.save(drama);
-        prose = new Genre("Prose");
+        prose = new Genre("2","Prose");
         prose = template.save(prose);
-        fantasy = new Genre("Fantasy");
+        fantasy = new Genre("3","Fantasy");
         fantasy = template.save(fantasy);
     }
 
     @ChangeSet(order = "002", id = "initAuthors", author = "madina", runAlways = true)
     public void initAuthors(MongoTemplate template) {
-        shakespeare = new Author("William Shakespeare");
+        shakespeare = new Author("1","William Shakespeare");
         shakespeare = template.save(shakespeare);
-        tolkien = new Author("J. R. R. Tolkien");
+        tolkien = new Author("2","J. R. R. Tolkien");
         tolkien = template.save(tolkien);
-        almostShakespeare = new Author("William");
+        almostShakespeare = new Author("3","William");
         almostShakespeare = template.save(almostShakespeare);
+        authorWithNoBooks = new Author("4", "Author with no books");
+        authorWithNoBooks = template.save(authorWithNoBooks);
     }
 
     @ChangeSet(order = "003", id = "initBooks", author = "madina", runAlways = true)
@@ -53,19 +56,19 @@ public class InitMongoDBDataChangeLog {
         List<Genre> genresOfHamlet = new ArrayList<>();
         genresOfHamlet.add(drama);
         genresOfHamlet.add(prose);
-        Book hamlet = new Book("Hamlet", authorsOfHamlet, genresOfHamlet);
+        Book hamlet = new Book("1","Hamlet", authorsOfHamlet, genresOfHamlet);
         hamlet = template.save(hamlet);
 
         List<Author> authorsOfLordOdRings = new ArrayList<>();
         authorsOfLordOdRings.add(tolkien);
         List<Genre> genreOfLordOfRings = new ArrayList<>();
         genreOfLordOfRings.add(fantasy);
-        Book lordOfRings = new Book("The Lord of the Rings", authorsOfLordOdRings, genreOfLordOfRings);
+        Book lordOfRings = new Book("2","The Lord of the Rings", authorsOfLordOdRings, genreOfLordOfRings);
         lordOfRings = template.save(lordOfRings);
 
         List<Author> authorsOfAlmostHamlet = new ArrayList<>();
         authorsOfAlmostHamlet.add(almostShakespeare);
-        Book almostHamlet = new Book("Hamlet", authorsOfAlmostHamlet, genresOfHamlet);
+        Book almostHamlet = new Book("3","Hamlet", authorsOfAlmostHamlet, genresOfHamlet);
         almostHamlet = template.save(almostHamlet);
     }
 

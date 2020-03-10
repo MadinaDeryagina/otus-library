@@ -30,7 +30,7 @@ public class RouterFunctionConfig {
                                 .flatMap(book -> ok().contentType(APPLICATION_JSON).body(fromValue(book))))
                 .DELETE(("/func/books/{id}"), accept(APPLICATION_JSON),
                         serverRequest -> bookRepository.deleteById(serverRequest.pathVariable("id"))
-                                .flatMap(x->noContent().build()))
+                                .then(noContent().build()))
                 .POST("/func/books",  accept(APPLICATION_JSON),
                         serverRequest -> bookHandler.createBook(serverRequest).flatMap(book -> ok().contentType(APPLICATION_JSON).body(fromValue(book))))
                 .PUT("/func/books/{id}",  accept(APPLICATION_JSON),
@@ -38,8 +38,8 @@ public class RouterFunctionConfig {
                 .GET("/func/authors", accept(APPLICATION_JSON),
                         request -> ok().contentType(APPLICATION_JSON).body(authorRepository.findAll(), Author.class))
                 .DELETE(("/func/authors/{id}"), accept(APPLICATION_JSON),
-                        serverRequest -> bookHandler.deleteAuthorById(serverRequest)
-                                .flatMap(x->noContent().build()))
+                        serverRequest -> bookHandler.deleteAuthorById(serverRequest).then(noContent().build())
+                )
                 .build();
     }
 }
