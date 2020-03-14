@@ -7,8 +7,13 @@ import org.springframework.web.reactive.function.server.ServerRequest;
 import otus.deryagina.spring.reactive.library.dao.AuthorRepository;
 import otus.deryagina.spring.reactive.library.dao.BookRepository;
 import otus.deryagina.spring.reactive.library.dao.GenreRepository;
+import otus.deryagina.spring.reactive.library.domain.Author;
 import otus.deryagina.spring.reactive.library.domain.Book;
+import otus.deryagina.spring.reactive.library.domain.Genre;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.util.List;
 
 @Slf4j
 @Service
@@ -20,28 +25,28 @@ public class BookHandler {
     private final GenreRepository genreRepository;
 
 
-    public Mono<Book> createBook(ServerRequest request) {
-        return
-                request.bodyToMono(Book.class).flatMap(book -> {
-                    book.setId(null);
-                    saveAuthorsAndGenresForBook(book);
-                    return bookRepository.save(book);
-                });
+    public Mono<Book> saveBook(ServerRequest request,boolean asNew) {
+     return  request.bodyToMono(Book.class).flatMap(
+             book -> {
+                 if(!asNew) {
+                     String id = request.pathVariable("id");
+                     book.setId(id);
+                 }else {
+                     book.setId(null);
+                 }
+                 Mono<List<Author>> monoAuthors =
+                         Flux.fromIterable(book.getAuthors())
+                                 .flatMap(authorRepository::save)
+                                 .collectList();
 
-    }
-
-    private void saveAuthorsAndGenresForBook(Book book) {
-        book.getAuthors().stream().filter(x -> x.getId() == null).forEach(x -> authorRepository.save(x).subscribe());
-        book.getGenres().stream().filter(x -> x.getId() == null).forEach(x -> genreRepository.save(x).subscribe());
-    }
-
-    public Mono<Book> updateBook(ServerRequest request) {
-        return
-                request.bodyToMono(Book.class).flatMap(book -> {
-                    book.setId(request.pathVariable("id"));
-                    saveAuthorsAndGenresForBook(book);
-                    return bookRepository.save(book);
-                });
+                 Mono<List<Genre>> monoGenres = Flux.fromIterable(book.getGenres())
+                         .flatMap(genreRepository::save).collectList();
+                 return Mono.zip(monoAuthors,monoGenres, (authors,genres)->{
+                     book.setAuthors(authors);
+                     book.setGenres(genres);
+                        return book;
+                 });
+             }).flatMap(bookRepository::save);
     }
 
     public Mono<?> deleteAuthorById(ServerRequest request) {

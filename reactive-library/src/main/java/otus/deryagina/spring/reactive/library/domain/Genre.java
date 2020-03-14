@@ -9,6 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @RequiredArgsConstructor
 @NoArgsConstructor
 @Document(collection = "genres")
+@EqualsAndHashCode(exclude = "id")
 public class Genre {
     @Id
     private String id;

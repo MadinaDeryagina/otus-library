@@ -1,7 +1,9 @@
+
 application:
   version: '@project.version@'
 spring:
   data:
     mongodb:
       database: library
-
+server:
+  port: 8082
