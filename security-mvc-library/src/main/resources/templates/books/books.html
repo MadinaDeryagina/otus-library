@@ -70,6 +70,13 @@
         </tr>
         </tbody>
     </table>
+    <!-- Add a logout button -->
+    <form action="#" th:action="@{/logout}"
+          method="POST">
+
+        <input type="submit" th:value="#{logout}" class="btn btn-outline-primary mt-2" />
+
+    </form>
 </div>
 </body>
 </html>

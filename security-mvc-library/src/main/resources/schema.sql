@@ -1,3 +1,19 @@
+drop table if exists users;
+create table users
+(
+    username varchar(50) primary key not null,
+    password char(68) not null,
+    enabled tinyint not null
+);
+
+drop table if exists authorities;
+create table authorities(
+    username varchar(50) not null,
+    authority varchar(50) not null,
+    foreign key (username) references users(username),
+    primary key (username,authority)
+);
+
 drop table if exists genres;
 create table genres
 (

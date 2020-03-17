@@ -1,3 +1,12 @@
+INSERT INTO users
+VALUES
+('madina','{bcrypt}$2y$10$Jrkj9y6.jevYFKGXny3WFejcZRCNLI1sox5uWAi2IZVMhqrk09Q7e',1);
+
+insert into authorities
+values (
+ 'madina','ROLE_ADMIN'
+       );
+
 insert into GENRES(id, name)
 values (1, 'Poetry');
 insert into GENRES(id, name)
