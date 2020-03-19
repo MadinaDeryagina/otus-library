@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import otus.deryagina.spring.library.security.mvc.dto.AuthorDTO;
@@ -25,6 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @DisplayName("Book controller ")
 @WebMvcTest
+@WithMockUser
 @Import(LocaleChangeInterceptor.class)
 class BookControllerTest {
 
@@ -32,6 +34,7 @@ class BookControllerTest {
     private static final String AUTHOR1_NAME ="Author 1" ;
     private static final String GENRE_TITLE = "Genre 1" ;
     private static final String TITLE_TWO = "TITLE 2";
+
     @Autowired
     private MockMvc mockMvc;
 
