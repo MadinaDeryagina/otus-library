@@ -2,6 +2,9 @@ package otus.deryagina.spring.library.security.mvc.controller;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -17,6 +20,7 @@ import otus.deryagina.spring.library.security.mvc.services.BookService;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.stream.Stream;
 
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasSize;
@@ -26,7 +30,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @DisplayName("Book controller ")
 @WebMvcTest
-@WithMockUser
 @Import(LocaleChangeInterceptor.class)
 class BookControllerTest {
 
@@ -42,6 +45,7 @@ class BookControllerTest {
     private BookService bookService;
 
     @Test
+    @WithMockUser
     @DisplayName("should return expected form and model when call get /show-all-books")
     void showAllBooks() throws Exception {
         BookDTO bookDTO1 = new BookDTO();
@@ -62,4 +66,31 @@ class BookControllerTest {
                 .andExpect(model().attribute("books",
                         contains(bookDTO1, bookDTO2)));
     }
+
+    @DisplayName("check get url with no param is available for mock user")
+    @WithMockUser
+    @ParameterizedTest
+    @MethodSource("generateUrlForGetWithNoParam")
+    void checkGetUrlsAvailableUser(String url) throws Exception {
+        mockMvc.perform(get(url))
+                .andExpect(status().isOk());
+    }
+
+    @DisplayName("check get url with no param is redirect without mock user")
+    @ParameterizedTest
+    @MethodSource("generateUrlForGetWithNoParam")
+    void checkGetUrlsRedirectToLogInForm(String url) throws Exception {
+        mockMvc.perform(get(url))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("http://localhost/show-login-form"));
+    }
+
+
+    private static Stream<Arguments> generateUrlForGetWithNoParam() {
+        return Stream.of(
+                Arguments.of("/show-all-books"),
+                Arguments.of("/show-form-for-add-book")
+        );
+    }
+
 }

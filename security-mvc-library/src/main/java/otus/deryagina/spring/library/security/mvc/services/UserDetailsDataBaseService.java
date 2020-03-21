@@ -24,15 +24,13 @@ public class UserDetailsDataBaseService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
-        Optional<UserEntity> optionalUserEntity = userRepository.findByUserName(userName);
-        if (!optionalUserEntity.isPresent()) {
-            throw new UsernameNotFoundException(userName);
-        }
-        UserEntity userEntity = optionalUserEntity.get();
+
+        UserEntity userEntity = userRepository.findByUserName(userName).orElseThrow(() -> new UsernameNotFoundException(userName));
         Set<GrantedAuthority> grantedAuthorities = userEntity.getAuthorities()
                 .stream()
                 .map(authority -> new SimpleGrantedAuthority(authority.getRole()))
                 .collect(Collectors.toSet());
+
         return new User(userEntity.getUserName(), userEntity.getPassword(), grantedAuthorities);
     }
 }
