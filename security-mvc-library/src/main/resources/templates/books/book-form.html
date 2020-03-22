@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <title>Save book</title>
+</head>
+<body>
+<div class="container">
+    <h1 th:text="#{books}">Books:</h1>
+    <hr>
+    <p class="h4 mb-4" th:text="#{book.save}"> Save Book</p>
+    <form action="#" th:action="@{/save-book}"
+                    th:object="${book}" method="post">
+        <!-- hidden form field for handle update -->
+        <input type="hidden" th:field="*{id}"/>
+        <input type="text" th:field="*{title}"
+               th:required="required"
+                class="form-control mb-4 col-4" th:placeholder="#{book.title}">
+        <input type="text" th:field="*{authorDTOS}"
+               th:required="required"
+               class="form-control mb-4 col-4" th:placeholder="#{book.authors.example}">
+
+        <input type="text" th:field="*{genreDTOS}"
+               th:required="required"
+               class="form-control mb-4 col-4" th:placeholder="#{book.genres.example}">
+
+        <button type="submit" class="btn btn-info col-2" th:text="#{save}">Save</button>
+    </form>
+    <hr>
+    <a th:href="@{/show-all-books}" th:text="#{back.to.book.list}">Back for list of Books</a>
+</div>
+</body>

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <title>List of all books</title>
+</head>
+<body>
+<div class="container">
+    <h1 th:text="#{books}">Books</h1>
+    <hr>
+    <div class="row justify-content-between">
+        <div class="col-4">
+            <a th:href="@{/show-form-for-add-book}"
+               th:text="#{add.book}"
+               class="btn btn-primary btn-sm mb-3">
+                Add book
+            </a>
+        </div>
+        <div class="col-4 align-self-end">
+            <a th:href="@{/show-all-books(lang=ru_Ru)}" th:text="#{lang.russian}" class="btn btn-info b btn-sm mb-3">Russian</a>
+            <a th:href="@{/show-all-books(lang=en_US)}" th:text="#{lang.english}" class="btn  btn-info btn-sm mb-3">English</a>
+        </div>
+    </div>
+
+    <table class="table table-bordered table-striped">
+        <thead class="thead-dark">
+        <tr>
+            <th th:text="#{book.title}">Title</th>
+            <th th:text="#{book.authors}">Authors</th>
+            <th th:text="#{book.genres}">Genres</th>
+            <th th:text="#{book.action}">Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="book : ${books}">
+            <td th:text="${book.title}">Default Book Title</td>
+            <td>
+                <ul>
+                    <li th:each="a : ${book.authorDTOS}" th:text="${a}">John Do</li>
+                </ul>
+            </td>
+            <td>
+                <ul>
+                    <li th:each="g:${book.genreDTOS}" th:text="${g}">Fantasy</li>
+                </ul>
+
+            </td>
+
+            <td>
+                <div class="row justify-content-around">
+                    <a th:href="@{/show-form-for-update-book(bookId=${book.id})}" th:text="#{book.update}"
+                       class="btn btn-info btn-sm">
+                        Update
+                    </a>
+                    <form action="#" th:action="@{/delete-book(id=${book.id})}" th:method="post">
+                        <input type="hidden" name="_method" value="delete" />
+                        <button type="submit" class="btn btn-danger btn-sm"
+                                onclick="if (!(confirm('Are you sure you want to delete this book?'))) return false"
+                                th:text="#{book.delete}">
+                            Delete
+                        </button>
+                    </form>
+                </div>
+
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <!-- Add a logout button -->
+    <form action="#" th:action="@{/logout}"
+          method="POST">
+
+        <input type="submit" th:value="#{logout}" class="btn btn-outline-primary mt-2" />
+
+    </form>
+</div>
+</body>
+</html>
