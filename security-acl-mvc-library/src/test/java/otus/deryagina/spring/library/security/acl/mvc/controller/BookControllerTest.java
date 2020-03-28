@@ -1,8 +1,6 @@
 package otus.deryagina.spring.library.security.acl.mvc.controller;
 
-import jdk.nashorn.internal.ir.annotations.Ignore;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -15,13 +13,11 @@ import org.springframework.context.annotation.Import;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
-import otus.deryagina.spring.library.security.acl.mvc.configuration.SecurityConfiguration;
 import otus.deryagina.spring.library.security.acl.mvc.dto.AuthorDTO;
 import otus.deryagina.spring.library.security.acl.mvc.dto.BookDTO;
 import otus.deryagina.spring.library.security.acl.mvc.dto.GenreDTO;
 import otus.deryagina.spring.library.security.acl.mvc.services.BookService;
 
-import java.net.URI;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
@@ -30,13 +26,14 @@ import java.util.stream.Stream;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @DisplayName("Book controller ")
 @WebMvcTest
-@Import({LocaleChangeInterceptor.class, SecurityConfiguration.class})
+@Import({LocaleChangeInterceptor.class})
 class BookControllerTest {
 
     private static final String TITLE = "Title";
@@ -45,13 +42,15 @@ class BookControllerTest {
     private static final String TITLE_TWO = "TITLE 2";
     private static final int EXPECTED_BOOK_ID = 1;
     private static final String DELETE_URL = "/delete-book";
+    private static final String SAVE_URL = "/save-book";
+    private static final String SHOW_ALL_BOOKS_URL = "/show-all-books";
+
 
     @Autowired
     private MockMvc mockMvc;
 
     @MockBean
     private BookService bookService;
-
     private BookDTO bookDTO1;
     private BookDTO bookDTO2;
 
@@ -75,7 +74,7 @@ class BookControllerTest {
     @DisplayName("should return expected form and model when call get /show-all-books")
     void showAllBooks() throws Exception {
         when(bookService.findAllBooks()).thenReturn(Arrays.asList(bookDTO1,bookDTO2));
-        mockMvc.perform(get("/show-all-books"))
+        mockMvc.perform(get(SHOW_ALL_BOOKS_URL))
                 .andExpect(status().isOk())
                 .andExpect(view().name("books/books"))
                 .andExpect(model().attribute("books",hasSize(2)))
@@ -130,19 +129,52 @@ class BookControllerTest {
                 .andExpect(status().isForbidden());
     }
 
-    //TODO:
-    @Disabled
+
     @DisplayName("check given post delete url is available for admin")
     @WithMockUser(roles = "ADMIN")
     @Test
     void checkGivenPostDeleteUrlAvailableForAdmin() throws Exception {
-        mockMvc.perform(post(DELETE_URL).param("bookId",String.valueOf(EXPECTED_BOOK_ID)))
-                .andExpect(status().isOk());
+        mockMvc.perform(post(DELETE_URL)
+                .param("id",String.valueOf(EXPECTED_BOOK_ID))
+                .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl(SHOW_ALL_BOOKS_URL));
+    }
+
+    @DisplayName("check given post delete url is unavailable for user")
+    @WithMockUser(roles = "USER")
+    @Test
+    void checkGivenPostDeleteUrlUnavailableForUser() throws Exception {
+        mockMvc.perform(post(DELETE_URL)
+                .param("id",String.valueOf(EXPECTED_BOOK_ID))
+                .with(csrf()))
+                .andExpect(status().isForbidden());
+    }
+
+    @DisplayName("check given post save url is available for user and admin")
+    @WithMockUser(roles = {"USER","ADMIN"})
+    @Test
+    void checkGivenPostSaveUrlAvailableForGivenRoles() throws Exception {
+        mockMvc.perform(post(SAVE_URL)
+                .flashAttr("book", bookDTO1)
+                .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl(SHOW_ALL_BOOKS_URL));
+    }
+
+    @DisplayName("check given post save url is available for user and admin")
+    @Test
+    void checkGivenPostSaveUrlUnavailableForNotAuthUsers() throws Exception {
+        mockMvc.perform(post(SAVE_URL)
+                .flashAttr("book", bookDTO1)
+                .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("http://localhost/show-login-form"));
     }
 
     private static Stream<Arguments> generateUrlForGetWithNoParam() {
         return Stream.of(
-                Arguments.of("/show-all-books"),
+                Arguments.of(SHOW_ALL_BOOKS_URL),
                 Arguments.of("/show-form-for-add-book")
         );
     }
