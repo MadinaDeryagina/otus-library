@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -10,6 +11,7 @@
 </head>
 <body>
 <div class="container">
+
     <h1 th:text="#{books}">Books</h1>
     <hr>
     <div class="row justify-content-between">
@@ -32,7 +34,9 @@
             <th th:text="#{book.title}">Title</th>
             <th th:text="#{book.authors}">Authors</th>
             <th th:text="#{book.genres}">Genres</th>
-            <th th:text="#{book.action}">Action</th>
+            <div sec:authorize="hasRole('ROLE_ADMIN')">
+                <th th:text="#{book.action}">Action</th>
+            </div>
         </tr>
         </thead>
         <tbody>
@@ -49,24 +53,25 @@
                 </ul>
 
             </td>
+            <div sec:authorize="hasRole('ROLE_ADMIN')">
+                <td>
+                    <div class="row justify-content-around">
+                        <a th:href="@{/show-form-for-update-book(bookId=${book.id})}" th:text="#{book.update}"
+                           class="btn btn-info btn-sm">
+                            Update
+                        </a>
 
-            <td>
-                <div class="row justify-content-around">
-                    <a th:href="@{/show-form-for-update-book(bookId=${book.id})}" th:text="#{book.update}"
-                       class="btn btn-info btn-sm">
-                        Update
-                    </a>
-                    <form action="#" th:action="@{/delete-book(id=${book.id})}" th:method="post">
-                        <input type="hidden" name="_method" value="delete" />
-                        <button type="submit" class="btn btn-danger btn-sm"
-                                onclick="if (!(confirm('Are you sure you want to delete this book?'))) return false"
-                                th:text="#{book.delete}">
-                            Delete
-                        </button>
-                    </form>
-                </div>
-
-            </td>
+                        <form action="#" th:action="@{/delete-book(id=${book.id})}" th:method="post">
+                            <input type="hidden" name="_method" value="delete"/>
+                            <button type="submit" class="btn btn-danger btn-sm"
+                                    onclick="if (!(confirm('Are you sure you want to delete this book?'))) return false"
+                                    th:text="#{book.delete}">
+                                Delete
+                            </button>
+                        </form>
+                    </div>
+                </td>
+            </div>
         </tr>
         </tbody>
     </table>
@@ -74,7 +79,7 @@
     <form action="#" th:action="@{/logout}"
           method="POST">
 
-        <input type="submit" th:value="#{logout}" class="btn btn-outline-primary mt-2" />
+        <input type="submit" th:value="#{logout}" class="btn btn-outline-primary mt-2"/>
 
     </form>
 </div>
