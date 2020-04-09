@@ -1,0 +1,31 @@
+version: "3"
+services:
+  postgres:
+    image: postgres:latest
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=my_db
+    ports:
+      - "5435:5432"
+    volumes:
+      - my_dbdata:/var/lib/postgresql/data
+    networks:
+      - my-network
+  web:
+    image: rest-library-with-docker:01.01.01-SNAPSHOT
+    networks:
+      - my-network
+    ports:
+      - "8085:8080"
+    environment:
+      - DB_DRIVER=org.postgresql.Driver
+      - DB_URL=jdbc:postgresql://postgres:5432/my_db
+      - DB_LOGIN=postgres
+      - DB_PASSWORD=postgres
+    depends_on:
+      - postgres
+networks:
+  my-network: {}
+volumes:
+  my_dbdata:

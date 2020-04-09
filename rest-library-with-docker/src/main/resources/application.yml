@@ -1,0 +1,36 @@
+application:
+  version: '@project.version@'
+spring:
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_LOGIN}
+    password: ${DB_PASSWORD}
+    driver-class-name: ${DB_DRIVER}
+    initialization-mode: always
+    schema: classpath:/schema.sql
+    data: classpath:/data.sql
+  jpa:
+    generate-ddl: false
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+server:
+  port: 8080
+management:
+  endpoints:
+    enabled-by-default: false
+    web:
+      exposure:
+        include: metrics, health, logfile
+  endpoint:
+    metrics:
+      enabled: true
+    health:
+      enabled: true
+      show-details: always
+    logfile:
+      enabled: true
+logging:
+  file:
+    name: app.log
+
