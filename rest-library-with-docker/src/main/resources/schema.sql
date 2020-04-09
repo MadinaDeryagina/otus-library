@@ -1,3 +1,6 @@
+drop table if exists comments;
+drop table if exists books_authors_correlation;
+drop table if exists books_genres_correlation;
 drop table if exists genres;
 create table genres
 (
@@ -16,7 +19,7 @@ create table authors
     id   serial primary key ,
     name varchar(255)
 );
-drop table if exists books_authors_correlation;
+
 create table books_authors_correlation
 (
     book_id   serial not null,
@@ -24,7 +27,7 @@ create table books_authors_correlation
     foreign key (book_id) references books (id) ON DELETE CASCADE,
     foreign key (author_id) references authors (id) ON DELETE CASCADE
 );
-drop table if exists books_genres_correlation;
+
 create table books_genres_correlation
 (
     book_id   serial not null,
@@ -32,7 +35,7 @@ create table books_genres_correlation
     foreign key (book_id) references books (id) ON DELETE CASCADE,
     foreign key (genre_id) references genres (id) ON DELETE CASCADE
 );
-drop table if exists comments;
+
 create table comments
 (
     id serial primary key ,
