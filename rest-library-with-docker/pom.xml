@@ -11,7 +11,6 @@
     <groupId>otus.deryagina.spring.libraryjpa</groupId>
     <artifactId>rest-library-with-docker</artifactId>
     <version>01.01.01-SNAPSHOT</version>
-    <!--    <version>${project.version}</version>-->
     <name>rest-library-with-docker</name>
     <description>Rest Library with Docker</description>
 
@@ -125,27 +124,6 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>com.spotify</groupId>
-                <artifactId>dockerfile-maven-plugin</artifactId>
-                <version>1.4.9</version>
-                <executions>
-                    <execution>
-                        <id>default</id>
-                        <goals>
-                            <goal>build</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <repository>docker.io/${project.artifactId}</repository>
-                    <tag>${project.version}</tag>
-                    <buildArgs>
-                        <finalName>${project.build.finalName}.jar</finalName>
-                    </buildArgs>
-                </configuration>
-
             </plugin>
         </plugins>
     </build>

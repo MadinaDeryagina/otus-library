@@ -13,7 +13,9 @@ services:
     networks:
       - my-network
   web:
-    image: rest-library-with-docker:01.01.01-SNAPSHOT
+    build:
+      context: .
+      dockerfile: Dockerfile
     networks:
       - my-network
     ports:
