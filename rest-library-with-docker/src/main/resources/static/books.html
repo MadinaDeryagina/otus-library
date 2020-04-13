@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <title>List of all books</title>
+    <script src="webjars/jquery/3.3.1/jquery.min.js"></script>
+</head>
+<body>
+<div class="container">
+    <h1>Books</h1>
+    <hr>
+
+    <table class="table table-bordered table-striped">
+        <thead class="thead-dark">
+        <tr>
+            <th>Title</th>
+            <th>Authors</th>
+            <th>Genres</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        </tbody>
+    </table>
+    <script>
+        $(function () {
+            $.get('/books').done(function (books) {
+                books.forEach(function (book) {
+                    let authors = book.authors.map(a => a.fullName).join(', ');
+                    let genres = book.genres.map(g => g.name).join(', ');
+                    $('tbody').append(`
+                        <tr>
+                            <td>${book.title}</td>
+                            <td>${authors}</td>
+                            <td>${genres}</td>
+                        </tr>
+                        `)
+                });
+            })
+        });
+    </script>
+</div>
+</body>
+</html>
